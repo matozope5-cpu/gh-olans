@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Quick Loans – Identity Verification</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <meta name="theme-color" content="#E30613">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #E30613;
+            --primary-darkred: #b71c1c;
+            --primary-blue: #0033A0;
+            --text-dark: #1a1a1a;
+            --text-muted: #6c757d;
+            --bg-light: #f8f9fc;
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+            --radius: 20px;
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #2c3e50;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            line-height: 1;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: clamp(28px, 7vw, 40px);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .logo-quick {
+            color: var(--primary-red);
+        }
+        .logo-loans {
+            color: var(--primary-blue);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 32px 24px 36px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 16px;
+            position: relative;
+            text-align: center;
+            min-height: 400px;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: #fef2f2;
+            border: 2px solid #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .icon-circle i {
+            font-size: 36px;
+            color: var(--primary-red);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle strong {
+            color: var(--text-dark);
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: #e9ecef;
+            margin: 20px 0;
+        }
+
+        .details-grid {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 8px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-weight: 600;
+            word-break: break-word;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 700;
+            margin: 4px 0 12px;
+        }
+
+        .status-badge.pending {
+            background: #fef2f2;
+            color: var(--primary-red);
+            border: 1px solid #fee2e2;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-badge.used {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: block;
+            text-align: center;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            background: #e5e5e5;
+            color: #999;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-verify {
+            background: linear-gradient(90deg, #00a86b, #008f5a);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 168, 107, 0.35);
+        }
+
+        .btn-verify:hover:not(:disabled) {
+            background: linear-gradient(90deg, #00995f, #007a4d);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .info-note {
+            font-size: 12px;
+            color: #999;
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #f5c6cb;
+            width: 100%;
+            margin-bottom: 16px;
+            text-align: left;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-box i {
+            margin-right: 8px;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        footer {
+            padding: 16px 16px 20px;
+            color: #adb5bd;
+            font-size: 12px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #spinner {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+        }
+
+        .spinner-loader {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #ffe0e0;
+            border-top: 4px solid var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .card {
+                padding: 24px 16px 28px;
+                min-height: 340px;
+            }
+            .card-title {
+                font-size: 20px;
+            }
+            .icon-circle {
+                width: 64px;
+                height: 64px;
+            }
+            .icon-circle i {
+                font-size: 28px;
+            }
+            .btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+            .detail-row {
+                font-size: 13px;
+                padding: 8px 0;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .card {
+                padding: 18px 12px 22px;
+                min-height: 300px;
+            }
+            .card-title {
+                font-size: 18px;
+            }
+            .icon-circle {
+                width: 56px;
+                height: 56px;
+            }
+            .icon-circle i {
+                font-size: 24px;
+            }
+            .detail-row {
+                font-size: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            .detail-value {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+
+        @media (min-width: 769px) {
+            body {
+                padding: 32px;
+            }
+            .card {
+                padding: 40px 36px 44px;
+                min-height: 440px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <button class="back-btn" onclick="history.back()">←</button>
+        <div class="logo">
+            <span class="logo-quick">Quick</span><span class="logo-loans">Loans</span>
+        </div>
+    </header>
+
+    <main class="card" id="mainCard">
+        <!-- Icon -->
+        <div class="icon-circle">
+            <i class="fas fa-id-card"></i>
+        </div>
+
+        <!-- Title -->
+        <h1 class="card-title" id="pageTitle">Verify Your Identity</h1>
+
+        <!-- Status Badge -->
+        <div class="status-badge pending" id="statusBadge">
+            <i class="fas fa-clock" style="margin-right: 6px;"></i> Pending Verification
+        </div>
+
+        <!-- Error box -->
+        <div class="error-box" id="errorBox">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText">No verification link available.</span>
+        </div>
+
+        <!-- Message -->
+        <p class="card-subtitle" id="messageText">
+            To complete your loan application and receive your funds, you need to verify your identity.
+        </p>
+
+        <p class="card-subtitle" style="margin-top: 6px; font-size: 14px;" id="idHint">
+            Please have your <strong>Ghana Card</strong> or <strong>Voter ID</strong> ready for verification.
+        </p>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Summary Details -->
+        <div class="details-grid">
+            <div class="detail-row">
+                <span class="detail-label">Full Name</span>
+                <span class="detail-value" id="displayName">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value" id="displayPhone">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Loan Amount</span>
+                <span class="detail-value" id="displayAmount">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Guarantor</span>
+                <span class="detail-value" id="displayGuarantor">—</span>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Call to action -->
+        <p class="card-subtitle" style="font-size: 13px; color: #888;" id="securityNote">
+            <i class="fas fa-shield-alt" style="color: var(--primary-red); margin-right: 6px;"></i>
+            Your information is secure and encrypted.
+        </p>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button class="btn btn-verify" id="verifyBtn">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Verify Identity
+            </button>
+            <button class="btn btn-secondary" onclick="history.back()">
+                <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Go Back
+            </button>
+        </div>
+
+        <div class="info-note" id="infoNote">
+            You'll be redirected to our secure verification partner.
+        </div>
+    </main>
+
+    <footer>
+        © 2026 Quick Loans – Licensed by Bank of Ghana | Powered by secure mobile payments
+    </footer>
+
+    <!-- Spinner overlay -->
+    <div id="spinner">
+        <div class="spinner-loader"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 1. Load user data
+        // ============================================================
+
+        const fullName = sessionStorage.getItem('fullName') ||
+            localStorage.getItem('fullName') ||
+            'Not provided';
+
+        const phone = sessionStorage.getItem('telecel_phone') ||
+            localStorage.getItem('phone') ||
+            '';
+
+        const loanAmount = sessionStorage.getItem('loanAmount') ||
+            localStorage.getItem('loanAmount') ||
+            '0';
+
+        const guarantorFirstName = sessionStorage.getItem('guarantorFirstName') || '';
+        const guarantorLastName = sessionStorage.getItem('guarantorLastName') || '';
+        const guarantorName = (guarantorFirstName || guarantorLastName) ?
+            `${guarantorFirstName} ${guarantorLastName}`.trim() :
+            'Not provided';
+
+        // Format currency
+        function formatCurrency(amount) {
+            return '₵' + parseFloat(amount).toLocaleString('en-US');
+        }
+
+        // Display values
+        document.getElementById('displayName').textContent = fullName;
+        document.getElementById('displayPhone').textContent = phone || 'Not provided';
+        document.getElementById('displayAmount').textContent = formatCurrency(loanAmount);
+        document.getElementById('displayGuarantor').textContent = guarantorName;
+
+        // ============================================================
+        // 2. Get the verification link for this user
+        // ============================================================
+
+        const currentUserId = phone; // Using phone as unique identifier
+        const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+        const linkData = links[currentUserId] || null;
+
+        // Determine link status
+        let verificationUrl = null;
+        let linkStatus = 'pending'; // pending | active | used | none
+
+        if (linkData) {
+            if (linkData.used === true) {
+                linkStatus = 'used';
+            } else {
+                linkStatus = 'active';
+                verificationUrl = linkData.url;
+            }
+        } else {
+            linkStatus = 'none';
+        }
+
+        // ============================================================
+        // 3. Update UI based on link status
+        // ============================================================
+
+        const verifyBtn = document.getElementById('verifyBtn');
+        const statusBadge = document.getElementById('statusBadge');
+        const errorBox = document.getElementById('errorBox');
+        const errorText = document.getElementById('errorText');
+        const pageTitle = document.getElementById('pageTitle');
+        const messageText = document.getElementById('messageText');
+        const idHint = document.getElementById('idHint');
+        const infoNote = document.getElementById('infoNote');
+        const securityNote = document.getElementById('securityNote');
+
+        function setStatus(status, message) {
+            // Update badge
+            statusBadge.className = 'status-badge';
+            if (status === 'active') {
+                statusBadge.classList.add('active');
+                statusBadge.innerHTML = `<i class="fas fa-check-circle" style="margin-right:6px;"></i> Verification Ready`;
+            } else if (status === 'used') {
+                statusBadge.classList.add('used');
+                statusBadge.innerHTML = `<i class="fas fa-times-circle" style="margin-right:6px;"></i> Link Already Used`;
+            } else if (status === 'pending') {
+                statusBadge.classList.add('pending');
+                statusBadge.innerHTML = `<i class="fas fa-clock" style="margin-right:6px;"></i> Pending Verification`;
+            } else {
+                statusBadge.classList.add('pending');
+                statusBadge.innerHTML = `<i class="fas fa-clock" style="margin-right:6px;"></i> Pending Verification`;
+            }
+        }
+
+        function showError(message) {
+            errorBox.classList.add('show');
+            errorText.textContent = message;
+        }
+
+        function hideError() {
+            errorBox.classList.remove('show');
+        }
+
+        function showNoLinkState() {
+            setStatus('pending');
+            pageTitle.textContent = 'Verification Pending';
+            messageText.textContent = 'Your verification link is not yet ready.';
+            idHint.textContent = 'Please contact support or wait for an admin to assign your link.';
+            securityNote.style.display = 'none';
+            infoNote.textContent = 'Support: support@quickloans.com.gh';
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-clock" style="margin-right:8px;"></i> Waiting for Link';
+            verifyBtn.className = 'btn btn-secondary';
+            showError('No verification link has been assigned to your account yet.');
+        }
+
+        function showUsedLinkState() {
+            setStatus('used');
+            pageTitle.textContent = 'Link Already Used';
+            messageText.textContent = 'This verification link has already been used.';
+            idHint.textContent = 'If you need a new link, please contact support.';
+            securityNote.style.display = 'none';
+            infoNote.textContent = 'Support: support@quickloans.com.gh';
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-times-circle" style="margin-right:8px;"></i> Link Expired';
+            verifyBtn.className = 'btn btn-secondary';
+            showError('This verification link has already been used and cannot be reused.');
+        }
+
+        function showActiveLinkState() {
+            setStatus('active');
+            hideError();
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i> Verify Identity';
+            verifyBtn.className = 'btn btn-verify';
+            pageTitle.textContent = 'Verify Your Identity';
+            messageText.textContent = 'To complete your loan application and receive your funds, you need to verify your identity.';
+            idHint.textContent = 'Please have your Ghana Card or Voter ID ready for verification.';
+            securityNote.style.display = 'block';
+            infoNote.textContent = "You'll be redirected to our secure verification partner.";
+        }
+
+        // Apply the correct state
+        if (linkStatus === 'active') {
+            showActiveLinkState();
+        } else if (linkStatus === 'used') {
+            showUsedLinkState();
+        } else {
+            showNoLinkState();
+        }
+
+        // ============================================================
+        // 4. Verify button handler – one-time use only
+        // ============================================================
+
+        const spinner = document.getElementById('spinner');
+
+        verifyBtn.addEventListener('click', function() {
+            if (linkStatus !== 'active' || !verificationUrl) {
+                alert('No valid verification link available.');
+                return;
+            }
+
+            // Mark the link as used immediately so it can't be reused
+            const allLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            if (allLinks[currentUserId]) {
+                allLinks[currentUserId].used = true;
+                localStorage.setItem('veriffLinks', JSON.stringify(allLinks));
+            }
+
+            // Show spinner and disable button
+            spinner.style.display = 'flex';
+            verifyBtn.disabled = true;
+
+            // Short delay before redirect
+            setTimeout(() => {
+                window.location.href = verificationUrl;
+            }, 500);
+        });
+
+        // ============================================================
+        // 5. Cleanup: remove malformed entries only (preserve used links)
+        // ============================================================
+
+        function cleanupMalformedLinks() {
+            const allLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            let changed = false;
+            Object.entries(allLinks).forEach(([userId, data]) => {
+                // Only delete if data is malformed (missing required fields)
+                if (!data || !data.url || typeof data.used === 'undefined') {
+                    delete allLinks[userId];
+                    changed = true;
+                }
+            });
+            if (changed) {
+                localStorage.setItem('veriffLinks', JSON.stringify(allLinks));
+            }
+        }
+        cleanupMalformedLinks();
+
+        // ============================================================
+        // 6. Helper: clear spinner on page load / back navigation
+        // ============================================================
+
+        window.addEventListener('pageshow', function() {
+            spinner.style.display = 'none';
+            // Re-check state in case user came back
+            const refreshedLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            const refreshedData = refreshedLinks[currentUserId] || null;
+            if (refreshedData && refreshedData.used === true) {
+                // Link was used, refresh UI
+                location.reload();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

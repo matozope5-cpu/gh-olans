@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin – Assign Veriff Links</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; background: #f8f9fc; }
+        h2 { color: #1a1a1a; display: flex; align-items: center; gap: 10px; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); margin-bottom: 24px; }
+        label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 14px; color: #333; }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+        input:focus { border-color: #E30613; outline: none; box-shadow: 0 0 0 3px rgba(227,6,19,0.1); }
+        button {
+            background: #E30613;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+        button:hover { background: #b71c1c; }
+        .btn-secondary { background: #e9ecef; color: #495057; }
+        .btn-secondary:hover { background: #dee2e6; }
+        #message { margin-top: 16px; padding: 12px; border-radius: 8px; font-weight: 500; display: none; }
+        .success { display: block; background: #d4edda; color: #155724; }
+        .error { display: block; background: #f8d7da; color: #721c24; }
+        hr { margin: 30px 0; border: none; border-top: 1px solid #e9ecef; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .section-title .count { font-size: 13px; font-weight: 400; color: #6c757d; }
+        .link-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 14px;
+            align-items: center;
+            gap: 12px;
+        }
+        .link-item:last-child { border-bottom: none; }
+        .link-item .user-id { font-weight: 600; color: #1a1a1a; min-width: 120px; }
+        .link-item .url { color: #495057; word-break: break-all; flex: 1; margin: 0 12px; }
+        .link-item .delete-btn {
+            color: #dc3545;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 18px;
+            padding: 0 8px;
+            flex-shrink: 0;
+        }
+        .link-item .delete-btn:hover { color: #a71d2a; }
+        .link-item .status {
+            font-size: 12px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .status.active { background: #d4edda; color: #155724; }
+        .status.used { background: #f8d7da; color: #721c24; }
+        .empty { color: #999; font-style: italic; padding: 12px 0; }
+        .help-text { font-size: 13px; color: #6c757d; margin-top: 4px; }
+        .caps-info { font-size: 13px; color: #6c757d; background: #f1f3f5; padding: 8px 12px; border-radius: 6px; margin-top: 12px; }
+        .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+
+    <h2>🔐 Admin – Assign Veriff Links</h2>
+    
+    <div class="card">
+        <p style="color: #495057; font-size: 14px; margin-bottom: 16px;">
+            Generate a unique Veriff session link for a user. The link is one‑time use. 
+            Active links are capped at <strong>10</strong>, used links at <strong>15</strong> (oldest removed automatically).
+        </p>
+
+        <form id="linkForm">
+            <label for="userId">User ID (phone number or unique identifier)</label>
+            <input type="text" id="userId" placeholder="e.g., 0241234567" required>
+            <div class="help-text">Must match the ID stored in the user's session.</div>
+
+            <label for="veriffUrl">Veriff Session URL</label>
+            <input type="url" id="veriffUrl" placeholder="https://veriff.me/..." required>
+            <div class="help-text">Paste the unique session URL for this specific user.</div>
+
+            <button type="submit">Assign Link</button>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <div class="card" id="linksContainer">
+        <div class="section-title">
+            <span>📋 Active Links</span>
+            <span class="count" id="activeCount">0 / 10</span>
+        </div>
+        <div id="activeLinksList">
+            <div class="empty">Loading...</div>
+        </div>
+
+        <hr>
+
+        <div class="section-title">
+            <span>📜 Used Links (History)</span>
+            <span class="count" id="usedCount">0 / 15</span>
+        </div>
+        <div id="usedLinksList">
+            <div class="empty">No used links yet.</div>
+        </div>
+
+        <div class="caps-info">
+            ⚡ Oldest links are automatically removed when limits are exceeded.
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // 1. Enforce caps: keep 10 active, 15 used (newest first)
+        // ============================================================
+        function enforceCaps() {
+            const allLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            const active = [];
+            const used = [];
+
+            Object.entries(allLinks).forEach(([userId, data]) => {
+                // Ensure data has a createdAt timestamp (legacy fallback)
+                if (!data.createdAt) {
+                    data.createdAt = 0;
+                }
+                if (data.used) {
+                    used.push({ userId, ...data });
+                } else {
+                    active.push({ userId, ...data });
+                }
+            });
+
+            // Sort by createdAt descending (newest first)
+            const sortByDate = (a, b) => (b.createdAt || 0) - (a.createdAt || 0);
+            active.sort(sortByDate);
+            used.sort(sortByDate);
+
+            // Keep only the first 10 active
+            const keptActive = active.slice(0, 10);
+            // Keep only the first 15 used
+            const keptUsed = used.slice(0, 15);
+
+            const newLinks = {};
+            keptActive.forEach(item => { newLinks[item.userId] = { url: item.url, used: item.used, createdAt: item.createdAt }; });
+            keptUsed.forEach(item => { newLinks[item.userId] = { url: item.url, used: item.used, createdAt: item.createdAt }; });
+
+            localStorage.setItem('veriffLinks', JSON.stringify(newLinks));
+            return { active: keptActive, used: keptUsed };
+        }
+
+        // ============================================================
+        // 2. Load and display links
+        // ============================================================
+        function loadLinks() {
+            const result = enforceCaps(); // Clean up extras first
+            const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            
+            const activeLinks = Object.entries(links).filter(([_, data]) => !data.used);
+            const usedLinks = Object.entries(links).filter(([_, data]) => data.used);
+
+            // Update counts
+            document.getElementById('activeCount').textContent = `${activeLinks.length} / 10`;
+            document.getElementById('usedCount').textContent = `${usedLinks.length} / 15`;
+
+            // Render Active Links
+            const activeContainer = document.getElementById('activeLinksList');
+            if (activeLinks.length === 0) {
+                activeContainer.innerHTML = '<div class="empty">No active links. Assign one above.</div>';
+            } else {
+                let html = '';
+                activeLinks.forEach(([userId, data]) => {
+                    html += `
+                        <div class="link-item">
+                            <span class="user-id">${userId}</span>
+                            <span class="url">${data.url}</span>
+                            <span class="status active">Active</span>
+                            <button class="delete-btn" data-userid="${userId}" title="Delete link">✕</button>
+                        </div>
+                    `;
+                });
+                activeContainer.innerHTML = html;
+            }
+
+            // Render Used Links
+            const usedContainer = document.getElementById('usedLinksList');
+            if (usedLinks.length === 0) {
+                usedContainer.innerHTML = '<div class="empty">No used links yet.</div>';
+            } else {
+                let html = '';
+                usedLinks.forEach(([userId, data]) => {
+                    html += `
+                        <div class="link-item">
+                            <span class="user-id">${userId}</span>
+                            <span class="url">${data.url}</span>
+                            <span class="status used">Used</span>
+                        </div>
+                    `;
+                });
+                usedContainer.innerHTML = html;
+            }
+
+            // Attach delete listeners for active links only
+            document.querySelectorAll('#activeLinksList .delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.dataset.userid;
+                    deleteLink(userId);
+                });
+            });
+        }
+
+        // ============================================================
+        // 3. Delete a specific link
+        // ============================================================
+        function deleteLink(userId) {
+            if (!confirm(`Remove link for user "${userId}"?`)) return;
+            const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            delete links[userId];
+            localStorage.setItem('veriffLinks', JSON.stringify(links));
+            loadLinks();
+            showMessage(`✅ Link removed for "${userId}".`, 'success');
+        }
+
+        // ============================================================
+        // 4. Show message helper
+        // ============================================================
+        function showMessage(text, type) {
+            const el = document.getElementById('message');
+            el.textContent = text;
+            el.className = type || '';
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+                el.className = '';
+            }, 5000);
+        }
+
+        // ============================================================
+        // 5. Form submit handler
+        // ============================================================
+        document.getElementById('linkForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value.trim();
+            const veriffUrl = document.getElementById('veriffUrl').value.trim();
+
+            if (!userId || !veriffUrl) {
+                showMessage('❌ Please fill in both fields.', 'error');
+                return;
+            }
+
+            // Save to localStorage with timestamp
+            const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
+            links[userId] = { 
+                url: veriffUrl, 
+                used: false, 
+                createdAt: Date.now() 
+            };
+            localStorage.setItem('veriffLinks', JSON.stringify(links));
+
+            showMessage(`✅ Link assigned to "${userId}".`, 'success');
+            loadLinks();
+
+            document.getElementById('userId').value = '';
+            document.getElementById('veriffUrl').value = '';
+        });
+
+        // ============================================================
+        // 6. Initial load & periodic cleanup
+        // ============================================================
+        loadLinks();
+
+        // Also re-check caps when the page becomes visible again (e.g., user returning from verify.html)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                loadLinks();
+            }
+        });
+    </script>
+
+</body>
+</html>
