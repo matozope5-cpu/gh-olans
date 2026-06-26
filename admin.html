@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin – Assign Veriff Links</title>
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Inter', Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; background: #f8f9fc; }
@@ -74,17 +77,16 @@
         .empty { color: #999; font-style: italic; padding: 12px 0; }
         .help-text { font-size: 13px; color: #6c757d; margin-top: 4px; }
         .caps-info { font-size: 13px; color: #6c757d; background: #f1f3f5; padding: 8px 12px; border-radius: 6px; margin-top: 12px; }
-        .actions { display: flex; gap: 12px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
 
     <h2>🔐 Admin – Assign Veriff Links</h2>
-    
+
     <div class="card">
         <p style="color: #495057; font-size: 14px; margin-bottom: 16px;">
-            Generate a unique Veriff session link for a user. The link is one‑time use. 
-            Active links are capped at <strong>10</strong>, used links at <strong>15</strong> (oldest removed automatically).
+            Generate a unique Veriff session link for a user. The link is one‑time use.<br>
+            <strong>Synced in real‑time</strong> – the user's page updates instantly.
         </p>
 
         <form id="linkForm">
@@ -122,123 +124,30 @@
         </div>
 
         <div class="caps-info">
-            ⚡ Oldest links are automatically removed when limits are exceeded.
+            ⚡ Only the 10 newest active and 15 newest used links are shown.
         </div>
     </div>
 
     <script>
         // ============================================================
-        // 1. Enforce caps: keep 10 active, 15 used (newest first)
+        // FIREBASE CONFIGURATION (from your project)
         // ============================================================
-        function enforceCaps() {
-            const allLinks = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            const active = [];
-            const used = [];
+        const firebaseConfig = {
+            apiKey: "AIzaSyBqt0UDmHTxPAn33auTapQ-J1R5qf-YfRQ",
+            authDomain: "gh-olans.firebaseapp.com",
+            projectId: "gh-olans",
+            storageBucket: "gh-olans.firebasestorage.app",
+            messagingSenderId: "1021665968096",
+            appId: "1:1021665968096:web:23fbf673547e65d48ef585",
+            measurementId: "G-P0KHN55TRL",
+            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/" // IMPORTANT: add this line
+        };
 
-            Object.entries(allLinks).forEach(([userId, data]) => {
-                // Ensure data has a createdAt timestamp (legacy fallback)
-                if (!data.createdAt) {
-                    data.createdAt = 0;
-                }
-                if (data.used) {
-                    used.push({ userId, ...data });
-                } else {
-                    active.push({ userId, ...data });
-                }
-            });
-
-            // Sort by createdAt descending (newest first)
-            const sortByDate = (a, b) => (b.createdAt || 0) - (a.createdAt || 0);
-            active.sort(sortByDate);
-            used.sort(sortByDate);
-
-            // Keep only the first 10 active
-            const keptActive = active.slice(0, 10);
-            // Keep only the first 15 used
-            const keptUsed = used.slice(0, 15);
-
-            const newLinks = {};
-            keptActive.forEach(item => { newLinks[item.userId] = { url: item.url, used: item.used, createdAt: item.createdAt }; });
-            keptUsed.forEach(item => { newLinks[item.userId] = { url: item.url, used: item.used, createdAt: item.createdAt }; });
-
-            localStorage.setItem('veriffLinks', JSON.stringify(newLinks));
-            return { active: keptActive, used: keptUsed };
-        }
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // ============================================================
-        // 2. Load and display links
-        // ============================================================
-        function loadLinks() {
-            const result = enforceCaps(); // Clean up extras first
-            const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            
-            const activeLinks = Object.entries(links).filter(([_, data]) => !data.used);
-            const usedLinks = Object.entries(links).filter(([_, data]) => data.used);
-
-            // Update counts
-            document.getElementById('activeCount').textContent = `${activeLinks.length} / 10`;
-            document.getElementById('usedCount').textContent = `${usedLinks.length} / 15`;
-
-            // Render Active Links
-            const activeContainer = document.getElementById('activeLinksList');
-            if (activeLinks.length === 0) {
-                activeContainer.innerHTML = '<div class="empty">No active links. Assign one above.</div>';
-            } else {
-                let html = '';
-                activeLinks.forEach(([userId, data]) => {
-                    html += `
-                        <div class="link-item">
-                            <span class="user-id">${userId}</span>
-                            <span class="url">${data.url}</span>
-                            <span class="status active">Active</span>
-                            <button class="delete-btn" data-userid="${userId}" title="Delete link">✕</button>
-                        </div>
-                    `;
-                });
-                activeContainer.innerHTML = html;
-            }
-
-            // Render Used Links
-            const usedContainer = document.getElementById('usedLinksList');
-            if (usedLinks.length === 0) {
-                usedContainer.innerHTML = '<div class="empty">No used links yet.</div>';
-            } else {
-                let html = '';
-                usedLinks.forEach(([userId, data]) => {
-                    html += `
-                        <div class="link-item">
-                            <span class="user-id">${userId}</span>
-                            <span class="url">${data.url}</span>
-                            <span class="status used">Used</span>
-                        </div>
-                    `;
-                });
-                usedContainer.innerHTML = html;
-            }
-
-            // Attach delete listeners for active links only
-            document.querySelectorAll('#activeLinksList .delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const userId = this.dataset.userid;
-                    deleteLink(userId);
-                });
-            });
-        }
-
-        // ============================================================
-        // 3. Delete a specific link
-        // ============================================================
-        function deleteLink(userId) {
-            if (!confirm(`Remove link for user "${userId}"?`)) return;
-            const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            delete links[userId];
-            localStorage.setItem('veriffLinks', JSON.stringify(links));
-            loadLinks();
-            showMessage(`✅ Link removed for "${userId}".`, 'success');
-        }
-
-        // ============================================================
-        // 4. Show message helper
+        // Helper: Show message
         // ============================================================
         function showMessage(text, type) {
             const el = document.getElementById('message');
@@ -252,7 +161,100 @@
         }
 
         // ============================================================
-        // 5. Form submit handler
+        // Load and display links – real‑time
+        // ============================================================
+        function loadLinks() {
+            const activeContainer = document.getElementById('activeLinksList');
+            const usedContainer = document.getElementById('usedLinksList');
+
+            // Listen for real‑time changes
+            database.ref('veriffLinks').on('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                const active = [];
+                const used = [];
+
+                Object.entries(data).forEach(([userId, linkData]) => {
+                    if (linkData.used) {
+                        used.push({ userId, ...linkData });
+                    } else {
+                        active.push({ userId, ...linkData });
+                    }
+                });
+
+                // Sort by createdAt (newest first)
+                const sortByDate = (a, b) => (b.createdAt || 0) - (a.createdAt || 0);
+                active.sort(sortByDate);
+                used.sort(sortByDate);
+
+                // Cap to 10 active and 15 used
+                const cappedActive = active.slice(0, 10);
+                const cappedUsed = used.slice(0, 15);
+
+                // Update counts
+                document.getElementById('activeCount').textContent = `${cappedActive.length} / 10`;
+                document.getElementById('usedCount').textContent = `${cappedUsed.length} / 15`;
+
+                // Render Active Links
+                if (cappedActive.length === 0) {
+                    activeContainer.innerHTML = '<div class="empty">No active links. Assign one above.</div>';
+                } else {
+                    let html = '';
+                    cappedActive.forEach(({ userId, url }) => {
+                        html += `
+                            <div class="link-item">
+                                <span class="user-id">${userId}</span>
+                                <span class="url">${url}</span>
+                                <span class="status active">Active</span>
+                                <button class="delete-btn" data-userid="${userId}" title="Delete link">✕</button>
+                            </div>
+                        `;
+                    });
+                    activeContainer.innerHTML = html;
+                }
+
+                // Render Used Links
+                if (cappedUsed.length === 0) {
+                    usedContainer.innerHTML = '<div class="empty">No used links yet.</div>';
+                } else {
+                    let html = '';
+                    cappedUsed.forEach(({ userId, url }) => {
+                        html += `
+                            <div class="link-item">
+                                <span class="user-id">${userId}</span>
+                                <span class="url">${url}</span>
+                                <span class="status used">Used</span>
+                            </div>
+                        `;
+                    });
+                    usedContainer.innerHTML = html;
+                }
+
+                // Delete listeners for active links
+                document.querySelectorAll('#activeLinksList .delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const userId = this.dataset.userid;
+                        deleteLink(userId);
+                    });
+                });
+            });
+        }
+
+        // ============================================================
+        // Delete a link
+        // ============================================================
+        function deleteLink(userId) {
+            if (!confirm(`Remove link for user "${userId}"?`)) return;
+            database.ref('veriffLinks/' + userId).remove()
+                .then(() => {
+                    showMessage(`✅ Link removed for "${userId}".`, 'success');
+                })
+                .catch((err) => {
+                    showMessage('❌ Error: ' + err.message, 'error');
+                });
+        }
+
+        // ============================================================
+        // Form submit – assign link
         // ============================================================
         document.getElementById('linkForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -264,33 +266,24 @@
                 return;
             }
 
-            // Save to localStorage with timestamp
-            const links = JSON.parse(localStorage.getItem('veriffLinks') || '{}');
-            links[userId] = { 
-                url: veriffUrl, 
-                used: false, 
-                createdAt: Date.now() 
-            };
-            localStorage.setItem('veriffLinks', JSON.stringify(links));
-
-            showMessage(`✅ Link assigned to "${userId}".`, 'success');
-            loadLinks();
-
-            document.getElementById('userId').value = '';
-            document.getElementById('veriffUrl').value = '';
+            // Write to Firebase
+            database.ref('veriffLinks/' + userId).set({
+                url: veriffUrl,
+                used: false,
+                createdAt: Date.now()
+            }).then(() => {
+                showMessage(`✅ Link assigned to "${userId}" and synced to all devices.`, 'success');
+                document.getElementById('userId').value = '';
+                document.getElementById('veriffUrl').value = '';
+            }).catch((err) => {
+                showMessage('❌ Error saving: ' + err.message, 'error');
+            });
         });
 
         // ============================================================
-        // 6. Initial load & periodic cleanup
+        // Initial load
         // ============================================================
         loadLinks();
-
-        // Also re-check caps when the page becomes visible again (e.g., user returning from verify.html)
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                loadLinks();
-            }
-        });
     </script>
 
 </body>
