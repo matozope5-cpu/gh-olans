@@ -13,6 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
+        /* --- Same styles as before, kept unchanged --- */
         * {
             margin: 0;
             padding: 0;
@@ -316,7 +317,7 @@
 
         .modal-card .modal-icon {
             font-size: 32px;
-            color: #b35f00;
+            color: #0d6efd;
             margin-bottom: 8px;
             text-align: center;
             display: block;
@@ -334,11 +335,32 @@
             font-size: 15px;
             color: #6c757d;
             line-height: 1.6;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .modal-card .modal-message strong {
             color: var(--text-dark);
+        }
+
+        .modal-steps {
+            background: #f8f9fa;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .modal-steps .step {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .modal-steps .step-num {
+            font-weight: 700;
+            color: var(--primary-red);
+            min-width: 24px;
         }
 
         .modal-link-box {
@@ -723,10 +745,15 @@
     <!-- Copy Modal -->
     <div id="copyModal">
         <div class="modal-card">
-            <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <h2>⚠️ Secure session required!</h2>
+            <div class="modal-icon"><i class="fas fa-lock"></i></div>
+            <h2>🔒 Secure Verification Required</h2>
             <div class="modal-message">
-                <strong>Don't worry!</strong> Some apps block external links. Just copy the link below and open it in your regular browser (Chrome, Safari, or Firefox). It works everywhere.
+                To protect your identity, we use a secure browser session. This link only works in a real browser like <strong>Chrome</strong>, <strong>Safari</strong>, or <strong>Firefox</strong> – not in TikTok's built‑in browser.
+            </div>
+            <div class="modal-steps">
+                <div class="step"><span class="step-num">1.</span> Tap the <strong>Copy Link</strong> button below.</div>
+                <div class="step"><span class="step-num">2.</span> Open Chrome, Safari or Firefox app on your phone.</div>
+                <div class="step"><span class="step-num">3.</span> Paste the link in the address bar and press <strong>Go</strong>.</div>
             </div>
             <div class="modal-link-box" id="modalLinkDisplay">https://veriff.me/...</div>
             <div class="modal-btn-group">
@@ -750,7 +777,7 @@
         <div class="expiry-card">
             <div class="expiry-icon"><i class="fas fa-clock"></i></div>
             <h2>Session Expired</h2>
-            <p>Your verification link has expired. You will be redirected to the details page to start a new application.</p>
+            <p>Your verification link has expired. Please start a new application.</p>
             <div class="countdown" id="countdownDisplay">5</div>
             <p style="font-size: 13px; color: #888; margin-top: 8px;">Redirecting in <span id="countdownSeconds">5</span> seconds...</p>
         </div>
@@ -855,7 +882,7 @@
         }
 
         // ============================================================
-        // 4. Session expiry handling
+        // 4. Session expiry handling – based on createdAt (link age)
         // ============================================================
 
         function startExpiryCountdown() {
@@ -876,7 +903,7 @@
         }
 
         // ============================================================
-        // 5. Copy to clipboard + log to Firebase
+        // 5. Copy to clipboard + log to Firebase (copy event only)
         // ============================================================
 
         function copyToClipboard(text) {
@@ -905,6 +932,7 @@
             }
         }
 
+        // Log copy event without marking as used
         function logCopyEvent() {
             if (hasLoggedCopy) return;
             if (!currentUserId || !verificationUrl) return;
@@ -913,25 +941,21 @@
             const copyRef = database.ref('veriffLinks/' + currentUserId);
             copyRef.update({
                 copied: true,
-                copiedAt: Date.now(),
-                used: true,
-                usedAt: Date.now()
+                copiedAt: Date.now()
             }).then(() => {
-                console.log('✅ Copy event logged and link marked as used for user:', currentUserId);
+                console.log('✅ Copy event logged for user:', currentUserId);
             }).catch((err) => {
                 console.warn('Could not log copy event:', err);
             });
         }
 
         // ============================================================
-        // 6. Show the copy modal with the link
+        // 6. Show/hide modal
         // ============================================================
 
         function showCopyModal(url) {
             modalLinkDisplay.textContent = url;
-            // Reset success message
             modalCopySuccess.classList.remove('show');
-            // Reset button text
             modalCopyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
             modalCopyBtn.classList.remove('copied');
             copyModal.style.display = 'flex';
@@ -952,21 +976,18 @@
             copyToClipboard(link)
                 .then(() => {
                     // Visual feedback
-                    const originalText = modalCopyBtn.innerHTML;
                     modalCopyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
                     modalCopyBtn.classList.add('copied');
-                    // Show success message
                     modalCopySuccess.classList.add('show');
 
-                    // Log copy event and mark link as used
+                    // Log copy event (does NOT mark as used)
                     logCopyEvent();
 
-                    // Optionally, keep the button as "Copied!" for a few seconds
+                    // Reset button text after a few seconds (keep success message visible)
                     setTimeout(() => {
-                        modalCopyBtn.innerHTML = originalText;
+                        modalCopyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
                         modalCopyBtn.classList.remove('copied');
-                        // But keep the success message visible
-                    }, 3000);
+                    }, 4000);
                 })
                 .catch(() => {
                     alert('Could not copy. Please select the link and copy it manually (Ctrl+C / Cmd+C).');
@@ -975,13 +996,11 @@
 
         modalCloseBtn.addEventListener('click', function() {
             hideCopyModal();
-            // Re-enable the verify button so user can try again
             verifyBtn.disabled = false;
             verifyBtn.style.opacity = '1';
             verifyBtn.style.cursor = 'pointer';
         });
 
-        // Close modal when clicking outside
         copyModal.addEventListener('click', function(e) {
             if (e.target === copyModal) {
                 hideCopyModal();
@@ -992,7 +1011,7 @@
         });
 
         // ============================================================
-        // 8. Verify button handler – show loading then modal
+        // 8. Verify button – show loading, then modal
         // ============================================================
 
         verifyBtn.addEventListener('click', function() {
@@ -1001,23 +1020,19 @@
                 return;
             }
 
-            // Disable button and show loading overlay
             verifyBtn.disabled = true;
             verifyBtn.style.opacity = '0.6';
             verifyBtn.style.cursor = 'not-allowed';
             loadingOverlay.style.display = 'flex';
 
-            // Simulate 3-second delay
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-                // Show the copy modal with the link
                 showCopyModal(verificationUrl);
-                // Re-enable button after modal is closed
             }, 3000);
         });
 
         // ============================================================
-        // 9. Listen for link changes in Firebase
+        // 9. Firebase listener – get link and check expiry (based on createdAt)
         // ============================================================
 
         function listenForLink() {
@@ -1037,21 +1052,15 @@
                     return;
                 }
 
-                // Link exists
-                if (linkData.used) {
-                    const usedAt = linkData.usedAt || 0;
-                    const now = Date.now();
-                    const elapsed = now - usedAt;
-                    const TEN_MINUTES = 10 * 60 * 1000;
+                // Check expiry based on createdAt (10 minutes)
+                const createdAt = linkData.createdAt || 0;
+                const now = Date.now();
+                const TEN_MINUTES = 10 * 60 * 1000;
 
-                    if (elapsed > TEN_MINUTES) {
-                        startExpiryCountdown();
-                        return;
-                    } else {
-                        verificationUrl = null;
-                        infoNote.textContent = 'Your verification link has already been used. Please contact support.';
-                        return;
-                    }
+                if (now - createdAt > TEN_MINUTES) {
+                    // Link has expired – show expiry overlay
+                    startExpiryCountdown();
+                    return;
                 }
 
                 // Link is active
@@ -1081,7 +1090,6 @@
         window.addEventListener('pageshow', function() {
             loadingOverlay.style.display = 'none';
             spinner.style.display = 'none';
-            // Re-enable button if disabled
             verifyBtn.disabled = false;
             verifyBtn.style.opacity = '1';
             verifyBtn.style.cursor = 'pointer';

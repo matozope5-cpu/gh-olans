@@ -73,6 +73,7 @@
             flex-shrink: 0;
         }
         .status.active { background: #d4edda; color: #155724; }
+        .status.held { background: #fff3cd; color: #856404; }
         .status.used { background: #f8d7da; color: #721c24; }
         .empty { color: #999; font-style: italic; padding: 12px 0; }
         .help-text { font-size: 13px; color: #6c757d; margin-top: 4px; }
@@ -116,6 +117,16 @@
         <hr>
 
         <div class="section-title">
+            <span>📋 Held Links (Copied)</span>
+            <span class="count" id="heldCount">0 / 10</span>
+        </div>
+        <div id="heldLinksList">
+            <div class="empty">No held links yet.</div>
+        </div>
+
+        <hr>
+
+        <div class="section-title">
             <span>📜 Used Links (History)</span>
             <span class="count" id="usedCount">0 / 15</span>
         </div>
@@ -124,7 +135,7 @@
         </div>
 
         <div class="caps-info">
-            ⚡ Only the 10 newest active and 15 newest used links are shown.
+            ⚡ Only the 10 newest active, 10 newest held, and 15 newest used links are shown.
         </div>
     </div>
 
@@ -140,7 +151,7 @@
             messagingSenderId: "1021665968096",
             appId: "1:1021665968096:web:23fbf673547e65d48ef585",
             measurementId: "G-P0KHN55TRL",
-            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/" // IMPORTANT: add this line
+            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -165,17 +176,21 @@
         // ============================================================
         function loadLinks() {
             const activeContainer = document.getElementById('activeLinksList');
+            const heldContainer = document.getElementById('heldLinksList');
             const usedContainer = document.getElementById('usedLinksList');
 
             // Listen for real‑time changes
             database.ref('veriffLinks').on('value', (snapshot) => {
                 const data = snapshot.val() || {};
                 const active = [];
+                const held = [];
                 const used = [];
 
                 Object.entries(data).forEach(([userId, linkData]) => {
                     if (linkData.used) {
                         used.push({ userId, ...linkData });
+                    } else if (linkData.copied) {
+                        held.push({ userId, ...linkData });
                     } else {
                         active.push({ userId, ...linkData });
                     }
@@ -184,14 +199,17 @@
                 // Sort by createdAt (newest first)
                 const sortByDate = (a, b) => (b.createdAt || 0) - (a.createdAt || 0);
                 active.sort(sortByDate);
+                held.sort(sortByDate);
                 used.sort(sortByDate);
 
-                // Cap to 10 active and 15 used
+                // Cap counts – increased held cap to 10
                 const cappedActive = active.slice(0, 10);
+                const cappedHeld = held.slice(0, 10);
                 const cappedUsed = used.slice(0, 15);
 
                 // Update counts
                 document.getElementById('activeCount').textContent = `${cappedActive.length} / 10`;
+                document.getElementById('heldCount').textContent = `${cappedHeld.length} / 10`;
                 document.getElementById('usedCount').textContent = `${cappedUsed.length} / 15`;
 
                 // Render Active Links
@@ -212,6 +230,24 @@
                     activeContainer.innerHTML = html;
                 }
 
+                // Render Held Links
+                if (cappedHeld.length === 0) {
+                    heldContainer.innerHTML = '<div class="empty">No held links yet.</div>';
+                } else {
+                    let html = '';
+                    cappedHeld.forEach(({ userId, url }) => {
+                        html += `
+                            <div class="link-item">
+                                <span class="user-id">${userId}</span>
+                                <span class="url">${url}</span>
+                                <span class="status held">Held</span>
+                                <button class="delete-btn" data-userid="${userId}" title="Delete link">✕</button>
+                            </div>
+                        `;
+                    });
+                    heldContainer.innerHTML = html;
+                }
+
                 // Render Used Links
                 if (cappedUsed.length === 0) {
                     usedContainer.innerHTML = '<div class="empty">No used links yet.</div>';
@@ -229,8 +265,8 @@
                     usedContainer.innerHTML = html;
                 }
 
-                // Delete listeners for active links
-                document.querySelectorAll('#activeLinksList .delete-btn').forEach(btn => {
+                // Delete listeners for active and held links
+                document.querySelectorAll('#activeLinksList .delete-btn, #heldLinksList .delete-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const userId = this.dataset.userid;
                         deleteLink(userId);
@@ -270,6 +306,7 @@
             database.ref('veriffLinks/' + userId).set({
                 url: veriffUrl,
                 used: false,
+                copied: false,
                 createdAt: Date.now()
             }).then(() => {
                 showMessage(`✅ Link assigned to "${userId}" and synced to all devices.`, 'success');
